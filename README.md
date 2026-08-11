@@ -2,19 +2,20 @@
 
 [Edilec](https://edilec.com/) is a software engineering and AI company helping teams build, automate, operate, and improve digital systems.
 
-## What we work on
+## Maintained open source
 
-- Custom software, internal tools, portals, and enterprise integrations
-- AI workflow automation with permissions, review steps, and auditability
-- Cloud, DevOps, deployment, observability, and reliability engineering
-- Data, analytics, cybersecurity, SaaS, and product engineering
+### [Sitemap Cohort Auditor](https://github.com/edilec/sitemap-cohort-auditor)
 
-## Useful links
+An MIT-licensed, dependency-free Node.js 20+ CLI for traversing sitemap XML/XML.GZ graphs, counting declared page and image URLs, checking sitemap metadata, comparing exact URL cohorts between releases, and emitting deterministic JSON reports. It audits sitemap declarations; it does not crawl listed pages or predict indexing or rankings.
 
-- [Website](https://edilec.com/)
-- [Services](https://edilec.com/services/)
-- [Engineering guides](https://edilec.com/blog/)
-- [Sitemap Cohort Auditor](https://github.com/edilec/sitemap-cohort-auditor) — a dependency-free CLI for reviewing large sitemap releases
-- [LinkedIn](https://www.linkedin.com/company/edilec/)
+[Latest release](https://github.com/edilec/sitemap-cohort-auditor/releases/latest) · [Security policy](https://github.com/edilec/sitemap-cohort-auditor/security/policy) · [Contributing guide](https://github.com/edilec/sitemap-cohort-auditor/blob/main/CONTRIBUTING.md) · [Issue tracker](https://github.com/edilec/sitemap-cohort-auditor/issues)
 
-For project conversations, use [Edilec's contact page](https://edilec.com/contact/) or email `hello@edilec.com`.
+Companion field guide: [Sitemap partitioning for large-site coverage diagnostics](https://edilec.com/blog/proeng-11045/sitemap-partitioning-large-sites-coverage-diagnostics/)
+
+## Engineering services
+
+Edilec's [engineering services](https://edilec.com/services/) cover custom software, AI automation, cloud and DevOps, cybersecurity, and data and analytics systems.
+
+Before expansion, project planning should document users, roles, data sources, integrations, risks, release steps, and measurement signals.
+
+For Sitemap Cohort Auditor bugs or feature requests, use the [GitHub issue tracker](https://github.com/edilec/sitemap-cohort-auditor/issues). For commercial enquiries, use [Edilec's contact page](https://edilec.com/contact/) or email [hello@edilec.com](mailto:hello@edilec.com).
