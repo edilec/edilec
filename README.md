@@ -1,6 +1,6 @@
 # Edilec
 
-[Edilec](https://edilec.com/) is a software engineering and AI company helping teams build, automate, operate, and improve digital systems. Company updates are available on [LinkedIn](https://www.linkedin.com/company/edilec/).
+[Edilec](https://edilec.com/) is a software engineering and AI company helping teams build, automate, operate, and improve digital systems.
 
 ## Maintained open source
 
@@ -16,6 +16,6 @@ Companion field guide: [Sitemap partitioning for large-site coverage diagnostics
 
 Edilec's [engineering services](https://edilec.com/services/) cover custom software, AI automation, cloud and DevOps, cybersecurity, and data and analytics systems.
 
-A typical engagement documents users, roles, data sources, integrations, risks, release steps, and measurement signals before the system is expanded.
+Before expansion, project planning should document users, roles, data sources, integrations, risks, release steps, and measurement signals.
 
 For Sitemap Cohort Auditor bugs or feature requests, use the [GitHub issue tracker](https://github.com/edilec/sitemap-cohort-auditor/issues). For commercial enquiries, use [Edilec's contact page](https://edilec.com/contact/) or email [hello@edilec.com](mailto:hello@edilec.com).
