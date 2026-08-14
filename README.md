@@ -26,6 +26,12 @@ An MIT-licensed, dependency-free Node.js 20+ CLI for traversing sitemap XML/XML.
 
 Companion field guide: [Sitemap partitioning for large-site coverage diagnostics](https://edilec.com/blog/proeng-11045/sitemap-partitioning-large-sites-coverage-diagnostics/)
 
+### [inline-json-for-html](https://github.com/edilec/inline-json-for-html)
+
+A dependency-free Node.js 22+ utility for serializing JSON for the text content of HTML script elements. It includes TypeScript declarations and is tested on Node.js 22, 24, and 26. It is not a general-purpose HTML sanitizer.
+
+[Latest release](https://github.com/edilec/inline-json-for-html/releases/latest) · [Security policy](https://github.com/edilec/inline-json-for-html/security/policy) · [Contributing guide](https://github.com/edilec/inline-json-for-html/blob/main/CONTRIBUTING.md) · [Issue tracker](https://github.com/edilec/inline-json-for-html/issues)
+
 ## Engineering services
 
 Edilec's [engineering services](https://edilec.com/services/) cover custom software, AI automation, cloud and DevOps, cybersecurity, and data and analytics systems.
