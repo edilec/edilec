@@ -1,4 +1,4 @@
-name: Refresh public profile metrics
+name: Refresh public engineering signal
 
 on:
   workflow_dispatch:
@@ -8,199 +8,199 @@ on:
 permissions: {}
 
 concurrency:
-  group: public-profile-metrics
+  group: public-engineering-signal
   cancel-in-progress: true
 
 jobs:
-  render:
-    name: Render public language mix
+  verify:
+    name: Build and verify evidence panels
     runs-on: ubuntu-latest
-    timeout-minutes: 9
+    timeout-minutes: 8
     permissions:
+      actions: read
       contents: read
     env:
-      METRICS_IMAGE: ghcr.io/lowlighter/metrics@sha256:257392f90340f916cb8b815026f259399f6b246d3eb7de38b58bfe7a07bd5b65
-      PUBLIC_REPOSITORIES: |-
-        @use.patterns
-        -*/*
-        +edilec/content-identity-auditor
-        +edilec/svg-semantic-layout-auditor
-        +edilec/sitemap-cohort-auditor
-        +edilec/inline-json-for-html
-      PROFILE_CSS: >-
-        .items-wrapper>section:first-child{display:none}h3{color:#2f8f6b;font-weight:600;margin-top:4px}svg{color:#57606a}.field.language.details small{color:#57606a}@media(prefers-color-scheme:dark){svg{color:#8c959f}h3{color:#5fb38e}.field.language.details small{color:#8c959f}}
+      PROFILE_KIND: company
+      PROFILE_LABEL: Edilec
+      PROFILE_REPOSITORIES: >-
+        edilec/sitemap-cohort-auditor,
+        edilec/inline-json-for-html,
+        edilec/svg-semantic-layout-auditor,
+        edilec/content-identity-auditor
+      EXPECTED_REPOSITORIES: "4"
     steps:
-      - name: Render with an isolated, digest-pinned Metrics container
+      - name: Check out the profile source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: Test the renderer
+        run: node --test .github/scripts/render-engineering-signal.test.mjs
+
+      - name: Render from the explicit repository allowlist
         env:
-          METRICS_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          output="$RUNNER_TEMP/engineering-signal"
+          node .github/scripts/render-engineering-signal.mjs "$output"
 
-          sudo install -d -m 0777 /metrics_renders
-          container_name=""
-          cleanup_container() {
-            if test -n "$container_name"; then
-              docker rm -f "$container_name" >/dev/null 2>&1 || true
+      - name: Validate generated SVGs
+        run: |
+          set -euo pipefail
+          directory="$RUNNER_TEMP/engineering-signal"
+          expected=(
+            engineering-signal-light.svg
+            engineering-signal-dark.svg
+            engineering-signal-mobile-light.svg
+            engineering-signal-mobile-dark.svg
+          )
+          test "$(find "$directory" -maxdepth 1 -type f | wc -l | tr -d ' ')" -eq "${#expected[@]}"
+
+          for filename in "${expected[@]}"; do
+            file="$directory/$filename"
+            test -f "$file"
+            bytes=$(wc -c < "$file" | tr -d ' ')
+            test "$bytes" -ge 1000
+            test "$bytes" -le 200000
+            head -c 512 "$file" | grep -Eqi '<svg([[:space:]>])'
+            grep -Fq 'data-component="repository-evidence"' "$file"
+            grep -Fq 'data-schema="1"' "$file"
+            grep -Fq "data-profile=\"$PROFILE_KIND\"" "$file"
+            grep -Fq "data-repositories=\"$EXPECTED_REPOSITORIES\"" "$file"
+
+            layout=desktop
+            if [[ "$filename" == *mobile* ]]; then
+              layout=mobile
             fi
-          }
-          trap cleanup_container EXIT
+            grep -Fq "data-layout=\"$layout\"" "$file"
 
-          render_status=1
-          for attempt in 1 2; do
-            container_name="profile-metrics-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${attempt}"
-            rm -f /metrics_renders/languages.svg
-            echo "Render attempt ${attempt}/2"
-
-            # Metrics launches Chrome while sizing the SVG, so its ephemeral overlay must remain writable.
-            if timeout --signal=TERM --kill-after=15s 3m \
-              docker run --init --rm \
-                --name "$container_name" \
-                --stop-timeout 10 \
-                --cap-drop ALL \
-                --security-opt no-new-privileges \
-                --pids-limit 512 \
-                --memory 2g \
-                --shm-size 512m \
-                --tmpfs /tmp:rw,nosuid,nodev,size=512m \
-                --volume /metrics_renders:/renders \
-                --env INPUT_TOKEN="$METRICS_TOKEN" \
-                --env INPUT_COMMITTER_TOKEN="" \
-                --env INPUT_USER="edilec" \
-                --env INPUT_FILENAME="languages.svg" \
-                --env INPUT_BASE="" \
-                --env INPUT_REPOSITORIES_FORKS="no" \
-                --env INPUT_REPOSITORIES_AFFILIATIONS="owner" \
-                --env INPUT_REPOSITORIES_SKIPPED="$PUBLIC_REPOSITORIES" \
-                --env INPUT_PLUGIN_LANGUAGES="yes" \
-                --env INPUT_PLUGIN_LANGUAGES_SECTIONS="most-used" \
-                --env INPUT_PLUGIN_LANGUAGES_LIMIT="6" \
-                --env INPUT_PLUGIN_LANGUAGES_THRESHOLD="0.5%" \
-                --env INPUT_PLUGIN_LANGUAGES_OTHER="yes" \
-                --env INPUT_PLUGIN_LANGUAGES_DETAILS="percentage" \
-                --env INPUT_PLUGIN_LANGUAGES_INDEPTH="no" \
-                --env INPUT_PLUGIN_LANGUAGES_COLORS="JavaScript:2f8f6b, Python:6b7280, TypeScript:5f6f7f" \
-                --env INPUT_EXTRAS_CSS="$PROFILE_CSS" \
-                --env INPUT_CONFIG_DISPLAY="regular" \
-                --env INPUT_CONFIG_ANIMATIONS="no" \
-                --env INPUT_CONFIG_BASE64="yes" \
-                --env INPUT_CONFIG_TWEMOJI="no" \
-                --env INPUT_NOTICE_RELEASES="no" \
-                --env INPUT_OUTPUT_ACTION="none" \
-                --env INPUT_RETRIES="1" \
-                --env INPUT_RETRIES_DELAY="0" \
-                --env INPUT_PLUGINS_ERRORS_FATAL="yes" \
-                --env INPUT_VERIFY="yes" \
-                "$METRICS_IMAGE"
-            then
-              render_status=0
-              container_name=""
-              break
-            else
-              render_status=$?
-              echo "::warning::Metrics render attempt ${attempt}/2 failed with status ${render_status}"
-              cleanup_container
-              container_name=""
+            if grep -Eqi '<(script|foreignObject|image|iframe|object|embed|link|meta|use)([[:space:]>])|javascript:|[[:space:]]on[a-z]+[[:space:]]*=|@import' "$file"; then
+              echo "Unsafe active content found in $filename" >&2
+              exit 1
             fi
-
-            if test "$attempt" -lt 2; then
-              sleep 10
+            if grep -Eqi "(href|xlink:href|src)[[:space:]]*=[[:space:]]*['\"](https?:)?//|url[[:space:]]*\([[:space:]'\"]*(https?:)?//" "$file"; then
+              echo "External resource reference found in $filename" >&2
+              exit 1
             fi
           done
 
-          if test "$render_status" -ne 0; then
-            echo "::error::Metrics render failed after 2 bounded attempts"
-            exit "$render_status"
-          fi
-
-      - name: Validate the generated SVG
-        run: |
-          set -euo pipefail
-          file=/metrics_renders/languages.svg
-          test -f "$file"
-          test "$(find /metrics_renders -type f | wc -l | tr -d ' ')" -eq 1
-          bytes=$(wc -c < "$file" | tr -d ' ')
-          test "$bytes" -ge 1000
-          test "$bytes" -le 2000000
-          head -c 512 "$file" | grep -Eqi '<svg([[:space:]>])'
-          if grep -Eqi '<(script|iframe|object|embed|link|meta)([[:space:]>])|javascript:|[[:space:]]on[a-z]+[[:space:]]*=|@import' "$file"; then
-            echo "Unsafe active content found in generated SVG" >&2
-            exit 1
-          fi
-          if grep -Eqi "(href|xlink:href|src)[[:space:]]*=[[:space:]]*['\"](https?:)?//|url[[:space:]]*\([[:space:]'\"]*(https?:)?//" "$file"; then
-            echo "External resource reference found in generated SVG" >&2
-            exit 1
-          fi
-
-      - name: Upload the validated component
+      - name: Upload validated evidence panels
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
-          name: public-profile-metrics
-          path: /metrics_renders/languages.svg
+          name: public-engineering-signal
+          path: ${{ runner.temp }}/engineering-signal/*.svg
           if-no-files-found: error
           retention-days: 1
 
   publish:
-    name: Publish validated component
-    needs: render
+    name: Publish changed evidence panels
+    needs: verify
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
       contents: write
+    env:
+      PROFILE_KIND: company
+      EXPECTED_REPOSITORIES: "4"
     steps:
-      - name: Download the validated component
+      - name: Download validated evidence panels
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
-          name: public-profile-metrics
-          path: ${{ runner.temp }}/public-profile-metrics
+          name: public-engineering-signal
+          path: ${{ runner.temp }}/engineering-signal
 
-      - name: Revalidate and publish only the SVG
+      - name: Revalidate and publish only semantic changes
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          file="$RUNNER_TEMP/public-profile-metrics/languages.svg"
-          test -f "$file"
-          test "$(find "$RUNNER_TEMP/public-profile-metrics" -type f | wc -l | tr -d ' ')" -eq 1
-          bytes=$(wc -c < "$file" | tr -d ' ')
-          test "$bytes" -ge 1000
-          test "$bytes" -le 2000000
-          head -c 512 "$file" | grep -Eqi '<svg([[:space:]>])'
-          if grep -Eqi '<(script|iframe|object|embed|link|meta)([[:space:]>])|javascript:|[[:space:]]on[a-z]+[[:space:]]*=|@import' "$file"; then
-            echo "Unsafe active content found in generated SVG" >&2
-            exit 1
-          fi
-          if grep -Eqi "(href|xlink:href|src)[[:space:]]*=[[:space:]]*['\"](https?:)?//|url[[:space:]]*\([[:space:]'\"]*(https?:)?//" "$file"; then
-            echo "External resource reference found in generated SVG" >&2
-            exit 1
-          fi
+          directory="$RUNNER_TEMP/engineering-signal"
+          expected=(
+            engineering-signal-light.svg
+            engineering-signal-dark.svg
+            engineering-signal-mobile-light.svg
+            engineering-signal-mobile-dark.svg
+          )
+          test "$(find "$directory" -maxdepth 1 -type f | wc -l | tr -d ' ')" -eq "${#expected[@]}"
+
+          for filename in "${expected[@]}"; do
+            file="$directory/$filename"
+            test -f "$file"
+            bytes=$(wc -c < "$file" | tr -d ' ')
+            test "$bytes" -ge 1000
+            test "$bytes" -le 200000
+            head -c 512 "$file" | grep -Eqi '<svg([[:space:]>])'
+            grep -Fq 'data-component="repository-evidence"' "$file"
+            grep -Fq 'data-schema="1"' "$file"
+            grep -Fq "data-profile=\"$PROFILE_KIND\"" "$file"
+            grep -Fq "data-repositories=\"$EXPECTED_REPOSITORIES\"" "$file"
+            if grep -Eqi '<(script|foreignObject|image|iframe|object|embed|link|meta|use)([[:space:]>])|javascript:|[[:space:]]on[a-z]+[[:space:]]*=|@import' "$file"; then
+              echo "Unsafe active content found in $filename" >&2
+              exit 1
+            fi
+            if grep -Eqi "(href|xlink:href|src)[[:space:]]*=[[:space:]]*['\"](https?:)?//|url[[:space:]]*\([[:space:]'\"]*(https?:)?//" "$file"; then
+              echo "External resource reference found in $filename" >&2
+              exit 1
+            fi
+          done
 
           if ! gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/metrics-renders" >/dev/null 2>&1; then
-            main_sha=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)
+            default_branch=$(gh api "repos/$GITHUB_REPOSITORY" --jq .default_branch)
+            default_sha=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/$default_branch" --jq .object.sha)
             gh api --method POST "repos/$GITHUB_REPOSITORY/git/refs" \
-              -f ref="refs/heads/metrics-renders" \
-              -f sha="$main_sha" >/dev/null
+              -f ref=refs/heads/metrics-renders \
+              -f sha="$default_sha" >/dev/null
           fi
 
-          existing_sha=""
-          existing_file=$(mktemp)
-          if gh api "repos/$GITHUB_REPOSITORY/contents/assets/metrics/languages.svg?ref=metrics-renders" \
-            --jq .content 2>/dev/null | tr -d '\n' | base64 --decode > "$existing_file"; then
-            if cmp -s "$file" "$existing_file"; then
-              echo "Metrics component is already current"
-              exit 0
+          parent_sha=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/metrics-renders" --jq .object.sha)
+          base_tree=$(gh api "repos/$GITHUB_REPOSITORY/git/commits/$parent_sha" --jq .tree.sha)
+          tree_entries=$(mktemp)
+          printf '[]\n' > "$tree_entries"
+
+          for filename in "${expected[@]}"; do
+            file="$directory/$filename"
+            target="assets/metrics/$filename"
+            existing_file=$(mktemp)
+            if gh api "repos/$GITHUB_REPOSITORY/contents/$target?ref=metrics-renders" \
+              --jq .content 2>/dev/null | tr -d '\n' | base64 --decode > "$existing_file"; then
+              if cmp -s "$file" "$existing_file"; then
+                echo "$filename is already current"
+                continue
+              fi
             fi
-            existing_sha=$(gh api "repos/$GITHUB_REPOSITORY/contents/assets/metrics/languages.svg?ref=metrics-renders" --jq .sha)
+
+            content=$(base64 < "$file" | tr -d '\n')
+            blob_sha=$(gh api --method POST "repos/$GITHUB_REPOSITORY/git/blobs" \
+              -f content="$content" \
+              -f encoding=base64 \
+              --jq .sha)
+            next_entries=$(mktemp)
+            jq --arg path "$target" --arg sha "$blob_sha" \
+              '. + [{path: $path, mode: "100644", type: "blob", sha: $sha}]' \
+              "$tree_entries" > "$next_entries"
+            mv "$next_entries" "$tree_entries"
+          done
+
+          if test "$(jq length "$tree_entries")" -eq 0; then
+            echo "All engineering-signal assets are already current"
+            exit 0
           fi
 
-          content=$(base64 < "$file" | tr -d '\n')
-          args=(
-            --method PUT
-            "repos/$GITHUB_REPOSITORY/contents/assets/metrics/languages.svg"
-            -f message="chore(metrics): refresh public language mix"
-            -f content="$content"
-            -f branch="metrics-renders"
-          )
-          if test -n "$existing_sha"; then
-            args+=( -f sha="$existing_sha" )
-          fi
-          gh api "${args[@]}" >/dev/null
+          tree_payload=$(mktemp)
+          jq -n --arg base_tree "$base_tree" --slurpfile entries "$tree_entries" \
+            '{base_tree: $base_tree, tree: $entries[0]}' > "$tree_payload"
+          new_tree=$(gh api --method POST "repos/$GITHUB_REPOSITORY/git/trees" \
+            --input "$tree_payload" \
+            --jq .sha)
+
+          commit_payload=$(mktemp)
+          jq -n --arg tree "$new_tree" --arg parent "$parent_sha" \
+            '{message: "chore(metrics): refresh engineering signal", tree: $tree, parents: [$parent]}' \
+            > "$commit_payload"
+          new_commit=$(gh api --method POST "repos/$GITHUB_REPOSITORY/git/commits" \
+            --input "$commit_payload" \
+            --jq .sha)
+          gh api --method PATCH "repos/$GITHUB_REPOSITORY/git/refs/heads/metrics-renders" \
+            -f sha="$new_commit" \
+            -F force=false >/dev/null
