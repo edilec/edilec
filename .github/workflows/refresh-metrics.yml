@@ -15,7 +15,7 @@ jobs:
   render:
     name: Render public language mix
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 9
     permissions:
       contents: read
     env:
@@ -24,48 +24,93 @@ jobs:
         @use.patterns
         -*/*
         +edilec/content-identity-auditor
+        +edilec/svg-semantic-layout-auditor
         +edilec/sitemap-cohort-auditor
         +edilec/inline-json-for-html
-        +KRISHNAMMurarka/retry-jitter-lab
       PROFILE_CSS: >-
         .items-wrapper>section:first-child{display:none}h3{color:#2f8f6b;font-weight:600;margin-top:4px}svg{color:#57606a}.field.language.details small{color:#57606a}@media(prefers-color-scheme:dark){svg{color:#8c959f}h3{color:#5fb38e}.field.language.details small{color:#8c959f}}
     steps:
-      - name: Render with an isolated, immutable Metrics container
+      - name: Render with an isolated, digest-pinned Metrics container
         env:
           METRICS_TOKEN: ${{ github.token }}
         run: |
+          set -euo pipefail
+
           sudo install -d -m 0777 /metrics_renders
-          docker run --init --rm \
-            --read-only \
-            --cap-drop ALL \
-            --security-opt no-new-privileges \
-            --pids-limit 512 \
-            --memory 2g \
-            --tmpfs /tmp:rw,nosuid,nodev,size=512m \
-            --volume /metrics_renders:/renders \
-            --env INPUT_TOKEN="$METRICS_TOKEN" \
-            --env INPUT_USER="edilec" \
-            --env INPUT_FILENAME="languages.svg" \
-            --env INPUT_BASE="" \
-            --env INPUT_REPOSITORIES_FORKS="no" \
-            --env INPUT_REPOSITORIES_AFFILIATIONS="owner, collaborator" \
-            --env INPUT_REPOSITORIES_SKIPPED="$PUBLIC_REPOSITORIES" \
-            --env INPUT_PLUGIN_LANGUAGES="yes" \
-            --env INPUT_PLUGIN_LANGUAGES_LIMIT="6" \
-            --env INPUT_PLUGIN_LANGUAGES_THRESHOLD="0.5%" \
-            --env INPUT_PLUGIN_LANGUAGES_OTHER="yes" \
-            --env INPUT_PLUGIN_LANGUAGES_DETAILS="percentage" \
-            --env INPUT_PLUGIN_LANGUAGES_INDEPTH="no" \
-            --env INPUT_PLUGIN_LANGUAGES_COLORS="JavaScript:2f8f6b, Python:6b7280, TypeScript:5f6f7f" \
-            --env INPUT_EXTRAS_CSS="$PROFILE_CSS" \
-            --env INPUT_CONFIG_ANIMATIONS="no" \
-            --env INPUT_CONFIG_BASE64="yes" \
-            --env INPUT_CONFIG_TWEMOJI="no" \
-            --env INPUT_NOTICE_RELEASES="no" \
-            --env INPUT_OUTPUT_ACTION="none" \
-            --env INPUT_PLUGINS_ERRORS_FATAL="yes" \
-            --env INPUT_VERIFY="yes" \
-            "$METRICS_IMAGE"
+          container_name=""
+          cleanup_container() {
+            if test -n "$container_name"; then
+              docker rm -f "$container_name" >/dev/null 2>&1 || true
+            fi
+          }
+          trap cleanup_container EXIT
+
+          render_status=1
+          for attempt in 1 2; do
+            container_name="profile-metrics-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${attempt}"
+            rm -f /metrics_renders/languages.svg
+            echo "Render attempt ${attempt}/2"
+
+            # Metrics launches Chrome while sizing the SVG, so its ephemeral overlay must remain writable.
+            if timeout --signal=TERM --kill-after=15s 3m \
+              docker run --init --rm \
+                --name "$container_name" \
+                --stop-timeout 10 \
+                --cap-drop ALL \
+                --security-opt no-new-privileges \
+                --pids-limit 512 \
+                --memory 2g \
+                --shm-size 512m \
+                --tmpfs /tmp:rw,nosuid,nodev,size=512m \
+                --volume /metrics_renders:/renders \
+                --env INPUT_TOKEN="$METRICS_TOKEN" \
+                --env INPUT_COMMITTER_TOKEN="" \
+                --env INPUT_USER="edilec" \
+                --env INPUT_FILENAME="languages.svg" \
+                --env INPUT_BASE="" \
+                --env INPUT_REPOSITORIES_FORKS="no" \
+                --env INPUT_REPOSITORIES_AFFILIATIONS="owner" \
+                --env INPUT_REPOSITORIES_SKIPPED="$PUBLIC_REPOSITORIES" \
+                --env INPUT_PLUGIN_LANGUAGES="yes" \
+                --env INPUT_PLUGIN_LANGUAGES_SECTIONS="most-used" \
+                --env INPUT_PLUGIN_LANGUAGES_LIMIT="6" \
+                --env INPUT_PLUGIN_LANGUAGES_THRESHOLD="0.5%" \
+                --env INPUT_PLUGIN_LANGUAGES_OTHER="yes" \
+                --env INPUT_PLUGIN_LANGUAGES_DETAILS="percentage" \
+                --env INPUT_PLUGIN_LANGUAGES_INDEPTH="no" \
+                --env INPUT_PLUGIN_LANGUAGES_COLORS="JavaScript:2f8f6b, Python:6b7280, TypeScript:5f6f7f" \
+                --env INPUT_EXTRAS_CSS="$PROFILE_CSS" \
+                --env INPUT_CONFIG_DISPLAY="regular" \
+                --env INPUT_CONFIG_ANIMATIONS="no" \
+                --env INPUT_CONFIG_BASE64="yes" \
+                --env INPUT_CONFIG_TWEMOJI="no" \
+                --env INPUT_NOTICE_RELEASES="no" \
+                --env INPUT_OUTPUT_ACTION="none" \
+                --env INPUT_RETRIES="1" \
+                --env INPUT_RETRIES_DELAY="0" \
+                --env INPUT_PLUGINS_ERRORS_FATAL="yes" \
+                --env INPUT_VERIFY="yes" \
+                "$METRICS_IMAGE"
+            then
+              render_status=0
+              container_name=""
+              break
+            else
+              render_status=$?
+              echo "::warning::Metrics render attempt ${attempt}/2 failed with status ${render_status}"
+              cleanup_container
+              container_name=""
+            fi
+
+            if test "$attempt" -lt 2; then
+              sleep 10
+            fi
+          done
+
+          if test "$render_status" -ne 0; then
+            echo "::error::Metrics render failed after 2 bounded attempts"
+            exit "$render_status"
+          fi
 
       - name: Validate the generated SVG
         run: |
@@ -77,12 +122,12 @@ jobs:
           test "$bytes" -ge 1000
           test "$bytes" -le 2000000
           head -c 512 "$file" | grep -Eqi '<svg([[:space:]>])'
-          if grep -Eqi '<(script|iframe|object|embed)([[:space:]>])|javascript:|[[:space:]]on(load|error)[[:space:]]*=' "$file"; then
+          if grep -Eqi '<(script|iframe|object|embed|link|meta)([[:space:]>])|javascript:|[[:space:]]on[a-z]+[[:space:]]*=|@import' "$file"; then
             echo "Unsafe active content found in generated SVG" >&2
             exit 1
           fi
-          if grep -Eqi "<image[^>]+(href|xlink:href)[[:space:]]*=[[:space:]]*['\"]https?://" "$file"; then
-            echo "External image reference found in generated SVG" >&2
+          if grep -Eqi "(href|xlink:href|src)[[:space:]]*=[[:space:]]*['\"](https?:)?//|url[[:space:]]*\([[:space:]'\"]*(https?:)?//" "$file"; then
+            echo "External resource reference found in generated SVG" >&2
             exit 1
           fi
 
@@ -120,12 +165,12 @@ jobs:
           test "$bytes" -ge 1000
           test "$bytes" -le 2000000
           head -c 512 "$file" | grep -Eqi '<svg([[:space:]>])'
-          if grep -Eqi '<(script|iframe|object|embed)([[:space:]>])|javascript:|[[:space:]]on(load|error)[[:space:]]*=' "$file"; then
+          if grep -Eqi '<(script|iframe|object|embed|link|meta)([[:space:]>])|javascript:|[[:space:]]on[a-z]+[[:space:]]*=|@import' "$file"; then
             echo "Unsafe active content found in generated SVG" >&2
             exit 1
           fi
-          if grep -Eqi "<image[^>]+(href|xlink:href)[[:space:]]*=[[:space:]]*['\"]https?://" "$file"; then
-            echo "External image reference found in generated SVG" >&2
+          if grep -Eqi "(href|xlink:href|src)[[:space:]]*=[[:space:]]*['\"](https?:)?//|url[[:space:]]*\([[:space:]'\"]*(https?:)?//" "$file"; then
+            echo "External resource reference found in generated SVG" >&2
             exit 1
           fi
 
