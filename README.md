@@ -1,85 +1,90 @@
-# Edilec
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./assets/brand/edilec-mark-on-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="./assets/brand/edilec-mark-on-light.svg">
+    <img src="./assets/brand/edilec-mark-on-light.svg" width="72" height="56" alt="Edilec">
+  </picture>
+</p>
 
-### Software. Systems. Scale.
+<h1 align="center">Edilec</h1>
 
-**Built to empower. Designed to last.**
+<p align="center">
+  <strong>Software. Systems. Scale.</strong><br>
+  Practical software engineering, AI workflow, cloud, data, identity, security, and product systems.
+</p>
 
-[Website](https://edilec.com/) · [Products](https://edilec.com/products/) · [Engineering library](https://edilec.com/blog/) · [Security](https://edilec.com/security/) · [Contact](https://edilec.com/contact/)
+<p align="center">
+  <a href="https://edilec.com/">Website</a> &nbsp;·&nbsp;
+  <a href="https://edilec.com/products/">Products</a> &nbsp;·&nbsp;
+  <a href="https://edilec.com/blog/">Engineering library</a> &nbsp;·&nbsp;
+  <a href="https://edilec.com/security/">Security</a> &nbsp;·&nbsp;
+  <a href="https://edilec.com/contact/">Contact</a>
+</p>
 
-Edilec Private Limited builds practical software, AI workflow, cloud, data,
-identity, security, and product systems. Public repositories are given one
-canonical home, an explicit maturity level, automated checks, and a documented
-security route.
+<p align="center">
+  <code>Product engineering</code> &nbsp;
+  <code>AI workflows</code> &nbsp;
+  <code>Cloud &amp; DevOps</code> &nbsp;
+  <code>Identity &amp; security</code> &nbsp;
+  <code>Data systems</code>
+</p>
+
+---
 
 ## Maintained open source
 
-### [SVG Semantic Layout Auditor](https://github.com/edilec/svg-semantic-layout-auditor)
+> ### [Sitemap Cohort Auditor →](https://github.com/edilec/sitemap-cohort-auditor)
+> Exact sitemap declaration and URL-cohort comparison between releases.
+>
+> `Node.js 20+` · `v0.2.1` · `MIT` · `maintained`<br>
+> [Release](https://github.com/edilec/sitemap-cohort-auditor/releases/tag/v0.2.1) · [Security](https://github.com/edilec/sitemap-cohort-auditor/security/policy)
 
-Static accessibility, reference-safety, dimension, and text-layout checks for
-SVG libraries—without rendering, executing content, or fetching a URL.
+> ### [inline-json-for-html →](https://github.com/edilec/inline-json-for-html)
+> Narrow JSON serialization for the raw text of HTML script elements; not a general HTML sanitizer.
+>
+> `Node.js 22+` · `v0.1.1` · `MIT` · `maintained`<br>
+> [Release](https://github.com/edilec/inline-json-for-html/releases/tag/v0.1.1) · [Security](https://github.com/edilec/inline-json-for-html/security/policy)
 
-**Node.js 20+ · v0.1.0 · MIT · release candidate**
+> ### [SVG Semantic Layout Auditor →](https://github.com/edilec/svg-semantic-layout-auditor)
+> Static accessibility, reference-safety, dimension, and text-layout checks for SVG libraries.
+>
+> `Node.js 20+` · `v0.1.0` · `MIT` · `release candidate`<br>
+> [Rules](https://github.com/edilec/svg-semantic-layout-auditor/blob/main/docs/rules.md) · [Security](https://github.com/edilec/svg-semantic-layout-auditor/security/policy)
 
-[Documentation](https://github.com/edilec/svg-semantic-layout-auditor#readme) · [Rules](https://github.com/edilec/svg-semantic-layout-auditor/blob/main/docs/rules.md) · [Checks](https://github.com/edilec/svg-semantic-layout-auditor/actions) · [Security](https://github.com/edilec/svg-semantic-layout-auditor/security/policy) · [Contribute](https://github.com/edilec/svg-semantic-layout-auditor/blob/main/CONTRIBUTING.md)
+> ### [Content Identity Auditor →](https://github.com/edilec/content-identity-auditor)
+> Content-ID collision, canonical identity, and publication-cadence auditing with deterministic JSON reports.
+>
+> `Node.js 22+` · `v0.1.0` · `MIT` · `experimental`<br>
+> [Release](https://github.com/edilec/content-identity-auditor/releases/tag/v0.1.0) · [Security](https://github.com/edilec/content-identity-auditor/security/policy)
 
-### [Content Identity Auditor](https://github.com/edilec/content-identity-auditor)
+## Open-source pulse
 
-Audits content-ID collisions, canonical identity, and publication cadence with
-a dependency-free CLI and deterministic JSON reports.
+<img src="https://raw.githubusercontent.com/edilec/edilec/metrics-renders/assets/metrics/language-stack.svg" width="480" alt="Language mix across Edilec's selected maintained public repositories">
 
-**Node.js 22+ · v0.1.0 · MIT · experimental**
+<img src="https://raw.githubusercontent.com/edilec/edilec/metrics-renders/assets/metrics/recent-public-activity.svg" width="480" alt="Recent public releases, pull requests, and reviews by Edilec">
 
-[Documentation](https://github.com/edilec/content-identity-auditor#readme) · [Release](https://github.com/edilec/content-identity-auditor/releases/tag/v0.1.0) · [Checks](https://github.com/edilec/content-identity-auditor/actions) · [Security](https://github.com/edilec/content-identity-auditor/security/policy) · [Contribute](https://github.com/edilec/content-identity-auditor/blob/main/CONTRIBUTING.md)
+## Product direction
 
-### [Sitemap Cohort Auditor](https://github.com/edilec/sitemap-cohort-auditor)
+> **[Uynis](https://edilec.com/products/uynis/)** is under active development.
+> Public material describes its direction; Edilec does not present its public
+> source as a production-ready release.
 
-Audits sitemap declarations and compares exact URL cohorts between releases.
-It reports declared sitemap evidence; it does not crawl pages or predict search
-performance.
+## How Edilec engineers
 
-**Node.js 20+ · v0.2.1 · MIT · maintained**
-
-[Documentation](https://github.com/edilec/sitemap-cohort-auditor#readme) · [Release](https://github.com/edilec/sitemap-cohort-auditor/releases/tag/v0.2.1) · [Checks](https://github.com/edilec/sitemap-cohort-auditor/actions) · [Security](https://github.com/edilec/sitemap-cohort-auditor/security/policy) · [Contribute](https://github.com/edilec/sitemap-cohort-auditor/blob/main/CONTRIBUTING.md)
-
-### [inline-json-for-html](https://github.com/edilec/inline-json-for-html)
-
-Serializes JSON for the raw text of `<script type="application/json">`
-elements. It is not a general-purpose HTML sanitizer.
-
-**Node.js 22+ · v0.1.1 · MIT · maintained**
-
-[Documentation](https://github.com/edilec/inline-json-for-html#readme) · [Release](https://github.com/edilec/inline-json-for-html/releases/tag/v0.1.1) · [Checks](https://github.com/edilec/inline-json-for-html/actions) · [Security](https://github.com/edilec/inline-json-for-html/security/policy) · [Contribute](https://github.com/edilec/inline-json-for-html/blob/main/CONTRIBUTING.md)
-
-## Public engineering language mix
-
-<img src="https://raw.githubusercontent.com/edilec/edilec/metrics-renders/assets/metrics/languages.svg" width="480" alt="Language mix across an explicit allowlist of maintained Edilec public repositories">
-
-Generated weekly from an explicit public-repository allowlist with
-[GitHub Metrics](https://github.com/lowlighter/metrics). Forks, private work,
-contribution-calendar activity, and vanity totals are excluded.
-
-## Engineering standard
-
-- Clear owners, service boundaries, maturity labels, and non-goals.
-- Security and privacy considered before release, with private disclosure paths.
-- Reproducible checks and release evidence before performance or readiness claims.
-- Small, reviewable changes with documented operational consequences.
-- Observability, recovery, and maintainable handover designed into systems.
-- Open-source support expectations and limitations stated explicitly.
-
-## Products and current work
-
-[Uynis](https://edilec.com/products/uynis/) is under active development. Public
-material describes its direction; Edilec does not present its public source as
-a production-ready release.
+- One canonical repository and a named maintainer for each public project.
+- Explicit maturity, support boundaries, limitations, and non-goals.
+- Security and privacy reviewed before release, with private disclosure routes.
+- Reproducible checks and release evidence before readiness or performance claims.
+- Small, reviewable changes with observable operations and recovery guidance.
 
 ## Company and maintainer
 
 **Edilec Private Limited** is led by
-[Krishnam Murarka](https://github.com/KRISHNAMMurarka), Founder and CEO. Krishnam
-maintains and contributes to Edilec's public engineering work.
+[Krishnam Murarka](https://github.com/KRISHNAMMurarka), Founder and CEO.
 
-For a repository vulnerability, follow its `SECURITY.md` instead of opening a
+For a repository vulnerability, follow its `SECURITY.md` rather than opening a
 public issue. For company or website security concerns, use the
 [Edilec security page](https://edilec.com/security/) or email
 [hello@edilec.com](mailto:hello@edilec.com).
+
+<p align="center"><strong>Built to empower. Designed to last.</strong></p>
