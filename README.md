@@ -1,47 +1,86 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://edilec.com/edilec-logo-combined-white.svg">
-    <img src="https://edilec.com/edilec-logo-combined.svg" width="280" alt="Edilec">
+    <source media="(prefers-color-scheme: dark)" srcset="./assets/profile/edilec-hero-dark.svg">
+    <img src="./assets/profile/edilec-hero-light.svg" width="100%" alt="Edilec — Software. Systems. Scale. Built to empower. Designed to last.">
   </picture>
 </p>
 
-<h1 align="center">Software engineering and AI systems for practical digital operations</h1>
-
 <p align="center">
-  <a href="https://edilec.com/">Website</a> ·
+  <a href="https://edilec.com/"><strong>Website</strong></a> ·
   <a href="https://edilec.com/services/">Services</a> ·
+  <a href="https://edilec.com/products/">Products</a> ·
   <a href="https://edilec.com/blog/">Engineering library</a> ·
+  <a href="https://edilec.com/security/">Security</a> ·
   <a href="https://edilec.com/contact/">Contact</a>
 </p>
 
-Edilec is a software engineering and AI company working across custom software, AI-assisted workflow automation, cloud and DevOps systems, data and reporting, security and identity controls, and product engineering.
+Edilec Private Limited builds practical software, AI workflow, cloud, data, identity, security, and product systems. We work from clear ownership and system boundaries toward software that can be tested, operated, and improved.
+
+## What Edilec builds
+
+- **Custom software and product engineering** — web applications, platforms, APIs, and internal systems shaped around real operating work.
+- **AI-assisted workflow systems** — automation with explicit inputs, approvals, failure paths, and human accountability.
+- **Cloud and DevOps platforms** — deployment, delivery, observability, and operational controls for maintainable services.
+- **Identity and security systems** — authentication, authorization, auditability, and responsible data boundaries.
+- **Data and reporting infrastructure** — integrations, reporting paths, and decision-ready operational data.
+- **Developer platforms and integrations** — tools and service connections that reduce repeated engineering work.
+
+## Products and current work
+
+### [Uynis](https://edilec.com/products/uynis/) · active development
+
+An Edilec product platform under active development. Public material describes the product direction; its public source is not presented as a production-ready release.
+
+### Edilec Mail · private development
+
+A privately developed mail and customer-communication system. Its source repository and deployment details are not public, and no public-release claim is made here.
 
 ## Maintained open source
 
 ### [Sitemap Cohort Auditor](https://github.com/edilec/sitemap-cohort-auditor)
 
-An MIT-licensed, dependency-free Node.js 20+ CLI for traversing sitemap XML/XML.GZ graphs, counting declared page and image URLs, checking sitemap metadata, comparing exact URL cohorts between releases, and emitting deterministic JSON reports. It audits sitemap declarations; it does not crawl listed pages or predict indexing or rankings.
+Audit sitemap declarations and compare exact URL cohorts between releases with a dependency-free Node.js CLI. It audits declared sitemap data; it does not crawl listed pages or predict indexing, rankings, or traffic.
 
-[Latest release](https://github.com/edilec/sitemap-cohort-auditor/releases/latest) · [Security policy](https://github.com/edilec/sitemap-cohort-auditor/security/policy) · [Contributing guide](https://github.com/edilec/sitemap-cohort-auditor/blob/main/CONTRIBUTING.md) · [Issue tracker](https://github.com/edilec/sitemap-cohort-auditor/issues)
+**v0.2.1** · **Node.js 20+** · **MIT** · CLI
 
-Companion field guide: [Sitemap partitioning for large-site coverage diagnostics](https://edilec.com/blog/proeng-11045/sitemap-partitioning-large-sites-coverage-diagnostics/)
+[Documentation](https://github.com/edilec/sitemap-cohort-auditor#readme) · [Release v0.2.1](https://github.com/edilec/sitemap-cohort-auditor/releases/tag/v0.2.1) · [Automated checks](https://github.com/edilec/sitemap-cohort-auditor/actions) · [Security](https://github.com/edilec/sitemap-cohort-auditor/security/policy) · [Contribute](https://github.com/edilec/sitemap-cohort-auditor/blob/main/CONTRIBUTING.md)
 
 ### [inline-json-for-html](https://github.com/edilec/inline-json-for-html)
 
-A dependency-free Node.js 22+ utility for serializing JSON for the text content of HTML script elements. It includes TypeScript declarations and is tested on Node.js 22, 24, and 26. It is not a general-purpose HTML sanitizer.
+Serialize JSON for the raw text of `<script type="application/json">` elements
+with a small dependency-free utility and TypeScript declarations. It is not for
+executable JavaScript or general HTML sanitization.
 
-[Latest release](https://github.com/edilec/inline-json-for-html/releases/latest) · [Security policy](https://github.com/edilec/inline-json-for-html/security/policy) · [Contributing guide](https://github.com/edilec/inline-json-for-html/blob/main/CONTRIBUTING.md) · [Issue tracker](https://github.com/edilec/inline-json-for-html/issues)
+**v0.1.1** · **Node.js 22+** · **MIT** · JavaScript library
 
-## Engineering services
+[Documentation](https://github.com/edilec/inline-json-for-html#readme) · [Release v0.1.1](https://github.com/edilec/inline-json-for-html/releases/tag/v0.1.1) · [Automated checks](https://github.com/edilec/inline-json-for-html/actions) · [Security](https://github.com/edilec/inline-json-for-html/security/policy) · [Contribute](https://github.com/edilec/inline-json-for-html/blob/main/CONTRIBUTING.md)
 
-Edilec's [engineering services](https://edilec.com/services/) cover custom software, AI automation, cloud and DevOps, cybersecurity, and data and analytics systems.
+## How Edilec engineers software
 
-Before expansion, project planning should document users, roles, data sources, integrations, risks, release steps, and measurement signals.
+- Define ownership, interfaces, and failure boundaries before scaling a system.
+- Treat security and privacy as design inputs, not release-stage additions.
+- Prefer reproducible builds, automated checks, and evidence over unsupported claims.
+- Keep changes reviewable and make operational consequences visible.
+- Design for observability, recovery, and maintainable handover.
+- Record architecture decisions, maturity, limitations, and non-goals explicitly.
+- Use automation to support accountable engineering—not to obscure responsibility.
+- Maintain open-source work with clear scope, support expectations, and disclosure paths.
 
-## Explore Edilec
+## Documentation and research
 
-- [Engineering library](https://edilec.com/blog/) — practical guides for software, AI, cloud, data, security, and product teams
-- [Authors and research](https://edilec.com/authors/) — author profiles and published work
-- [Official logos and company reference](https://edilec.com/brand-assets/) — approved files and factual company information
+- [Engineering library](https://edilec.com/blog/) — practical writing across software, AI, cloud, data, security, and product work.
+- [Products](https://edilec.com/products/) — current Edilec product directions and public product information.
+- [Services](https://edilec.com/services/) — engineering capabilities and engagement areas.
+- [Authors](https://edilec.com/authors/) — the people and teams responsible for Edilec's published work.
 
-For Sitemap Cohort Auditor bugs or feature requests, use the [GitHub issue tracker](https://github.com/edilec/sitemap-cohort-auditor/issues). For commercial enquiries, use [Edilec's contact page](https://edilec.com/contact/) or email [hello@edilec.com](mailto:hello@edilec.com).
+## Security and contributing
+
+For a repository vulnerability, follow that repository's `SECURITY.md` and avoid disclosing unresolved security issues in a public issue. For company or website security concerns, use the [Edilec security page](https://edilec.com/security/) or email [hello@edilec.com](mailto:hello@edilec.com).
+
+Contributions should begin with the affected repository's contribution guide and issue tracker. Scope, compatibility, tests, documentation, and security impact should be clear before a change is merged.
+
+## Company and maintainers
+
+**Edilec Private Limited** is led by [Krishnam Murarka](https://github.com/KRISHNAMMurarka), Founder and CEO. Krishnam contributes to and maintains Edilec's public engineering work.
+
+For project planning or commercial enquiries, visit [edilec.com/contact](https://edilec.com/contact/) or email [hello@edilec.com](mailto:hello@edilec.com).
