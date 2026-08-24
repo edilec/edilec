@@ -153,10 +153,14 @@ jobs:
               -f sha="$default_sha" >/dev/null
           fi
 
+          parent_sha=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/metrics-renders" --jq .object.sha)
+          base_tree=$(gh api "repos/$GITHUB_REPOSITORY/git/commits/$parent_sha" --jq .tree.sha)
+          tree_entries=$(mktemp)
+          printf '[]\n' > "$tree_entries"
+
           for filename in "${expected[@]}"; do
             file="$directory/$filename"
             target="assets/metrics/$filename"
-            existing_sha=""
             existing_file=$(mktemp)
             if gh api "repos/$GITHUB_REPOSITORY/contents/$target?ref=metrics-renders" \
               --jq .content 2>/dev/null | tr -d '\n' | base64 --decode > "$existing_file"; then
@@ -164,19 +168,39 @@ jobs:
                 echo "$filename is already current"
                 continue
               fi
-              existing_sha=$(gh api "repos/$GITHUB_REPOSITORY/contents/$target?ref=metrics-renders" --jq .sha)
             fi
 
             content=$(base64 < "$file" | tr -d '\n')
-            args=(
-              --method PUT
-              "repos/$GITHUB_REPOSITORY/contents/$target"
-              -f "message=chore(metrics): refresh engineering signal"
-              -f content="$content"
-              -f branch=metrics-renders
-            )
-            if test -n "$existing_sha"; then
-              args+=( -f sha="$existing_sha" )
-            fi
-            gh api "${args[@]}" >/dev/null
+            blob_sha=$(gh api --method POST "repos/$GITHUB_REPOSITORY/git/blobs" \
+              -f content="$content" \
+              -f encoding=base64 \
+              --jq .sha)
+            next_entries=$(mktemp)
+            jq --arg path "$target" --arg sha "$blob_sha" \
+              '. + [{path: $path, mode: "100644", type: "blob", sha: $sha}]' \
+              "$tree_entries" > "$next_entries"
+            mv "$next_entries" "$tree_entries"
           done
+
+          if test "$(jq length "$tree_entries")" -eq 0; then
+            echo "All engineering-signal assets are already current"
+            exit 0
+          fi
+
+          tree_payload=$(mktemp)
+          jq -n --arg base_tree "$base_tree" --slurpfile entries "$tree_entries" \
+            '{base_tree: $base_tree, tree: $entries[0]}' > "$tree_payload"
+          new_tree=$(gh api --method POST "repos/$GITHUB_REPOSITORY/git/trees" \
+            --input "$tree_payload" \
+            --jq .sha)
+
+          commit_payload=$(mktemp)
+          jq -n --arg tree "$new_tree" --arg parent "$parent_sha" \
+            '{message: "chore(metrics): refresh engineering signal", tree: $tree, parents: [$parent]}' \
+            > "$commit_payload"
+          new_commit=$(gh api --method POST "repos/$GITHUB_REPOSITORY/git/commits" \
+            --input "$commit_payload" \
+            --jq .sha)
+          gh api --method PATCH "repos/$GITHUB_REPOSITORY/git/refs/heads/metrics-renders" \
+            -f sha="$new_commit" \
+            -F force=false >/dev/null
