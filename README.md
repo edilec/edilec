@@ -57,9 +57,16 @@
 > `Node.js 22+` · `v0.1.0` · `MIT` · `experimental`<br>
 > [Release](https://github.com/edilec/content-identity-auditor/releases/tag/v0.1.0) · [Security](https://github.com/edilec/content-identity-auditor/security/policy)
 
-## Open-source pulse
+## Open-source engineering evidence
 
-<img src="https://raw.githubusercontent.com/edilec/edilec/metrics-renders/assets/metrics/language-stack.svg" width="480" alt="Language mix across Edilec's selected maintained public repositories">
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark) and (max-width: 600px)" srcset="https://raw.githubusercontent.com/edilec/edilec/metrics-renders/assets/metrics/engineering-signal-mobile-dark.svg">
+    <source media="(max-width: 600px)" srcset="https://raw.githubusercontent.com/edilec/edilec/metrics-renders/assets/metrics/engineering-signal-mobile-light.svg">
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/edilec/edilec/metrics-renders/assets/metrics/engineering-signal-dark.svg">
+    <img src="https://raw.githubusercontent.com/edilec/edilec/metrics-renders/assets/metrics/engineering-signal-light.svg" width="960" alt="Release, CI, security-policy, and licence status for Edilec's maintained public repositories">
+  </picture>
+</p>
 
 ## Product direction
 

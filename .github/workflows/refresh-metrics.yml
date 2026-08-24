@@ -1,4 +1,4 @@
-name: Refresh public profile metrics
+name: Refresh public engineering signal
 
 on:
   workflow_dispatch:
@@ -8,189 +8,53 @@ on:
 permissions: {}
 
 concurrency:
-  group: public-profile-metrics
+  group: public-engineering-signal
   cancel-in-progress: true
 
 jobs:
-  render:
-    name: Render ${{ matrix.component }}
+  verify:
+    name: Build and verify evidence panels
     runs-on: ubuntu-latest
-    timeout-minutes: 9
+    timeout-minutes: 8
     permissions:
+      actions: read
       contents: read
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - component: language-stack
-            filename: language-stack.svg
     env:
-      METRICS_IMAGE: ghcr.io/lowlighter/metrics@sha256:0a24a23b769873639e7d7d3bebce0aade41ded920f8bfd74650328f4c4967b48
-      SELECTED_REPOSITORIES: >-
-        edilec/content-identity-auditor,
-        edilec/svg-semantic-layout-auditor,
+      PROFILE_KIND: company
+      PROFILE_LABEL: Edilec
+      PROFILE_REPOSITORIES: >-
         edilec/sitemap-cohort-auditor,
-        edilec/inline-json-for-html
-      LANGUAGE_CSS: >-
-        .items-wrapper>section:first-child{display:none}h3{color:#2f8f6b;font-weight:600;margin-top:4px}svg{color:#57606a}.field.language.details small{color:#57606a}@media(prefers-color-scheme:dark){svg{color:#8c959f}h3{color:#5fb38e}.field.language.details small{color:#8c959f}}
+        edilec/inline-json-for-html,
+        edilec/svg-semantic-layout-auditor,
+        edilec/content-identity-auditor
+      EXPECTED_REPOSITORIES: "4"
     steps:
-      - name: Render with an isolated, digest-pinned Metrics container
-        env:
-          METRICS_TOKEN: ${{ github.token }}
-          COMPONENT: ${{ matrix.component }}
-          FILENAME: ${{ matrix.filename }}
-        run: |
-          set -euo pipefail
-
-          sudo install -d -m 0777 /metrics_renders
-          container_name=""
-          cleanup_container() {
-            if test -n "$container_name"; then
-              docker rm -f "$container_name" >/dev/null 2>&1 || true
-            fi
-          }
-          trap cleanup_container EXIT
-
-          plugin_args=()
-          component_css=""
-          case "$COMPONENT" in
-            language-stack)
-              component_css="$LANGUAGE_CSS"
-              plugin_args=(
-                --env INPUT_PLUGIN_LANGUAGES=yes
-                --env INPUT_PLUGIN_LANGUAGES_SECTIONS=most-used
-                --env INPUT_PLUGIN_LANGUAGES_LIMIT=6
-                --env INPUT_PLUGIN_LANGUAGES_THRESHOLD=0.5%
-                --env INPUT_PLUGIN_LANGUAGES_OTHER=yes
-                --env INPUT_PLUGIN_LANGUAGES_DETAILS=percentage
-                --env INPUT_PLUGIN_LANGUAGES_INDEPTH=yes
-                --env INPUT_PLUGIN_LANGUAGES_INDEPTH_CUSTOM="$SELECTED_REPOSITORIES"
-                --env INPUT_PLUGIN_LANGUAGES_ANALYSIS_TIMEOUT=60
-                --env INPUT_PLUGIN_LANGUAGES_ANALYSIS_TIMEOUT_REPOSITORIES=12
-                --env "INPUT_PLUGIN_LANGUAGES_COLORS=JavaScript:2f8f6b, Python:6b7280, TypeScript:5f6f7f"
-              )
-              ;;
-            *)
-              echo "::error::Unknown Metrics component: $COMPONENT"
-              exit 1
-              ;;
-          esac
-
-          render_status=1
-          for attempt in 1 2; do
-            container_name="profile-metrics-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${COMPONENT}-${attempt}"
-            rm -f "/metrics_renders/$FILENAME"
-            echo "Render $COMPONENT attempt ${attempt}/2"
-
-            if timeout --signal=TERM --kill-after=15s 3m \
-              docker run --init --rm \
-                --name "$container_name" \
-                --stop-timeout 10 \
-                --cap-drop ALL \
-                --security-opt no-new-privileges \
-                --pids-limit 512 \
-                --memory 2g \
-                --shm-size 512m \
-                --tmpfs /tmp:rw,nosuid,nodev,size=512m \
-                --volume /metrics_renders:/renders \
-                --env INPUT_TOKEN="$METRICS_TOKEN" \
-                --env INPUT_COMMITTER_TOKEN="" \
-                --env INPUT_USER=edilec \
-                --env INPUT_FILENAME="$FILENAME" \
-                --env INPUT_BASE="" \
-                --env INPUT_REPOSITORIES_FORKS=no \
-                --env INPUT_REPOSITORIES_AFFILIATIONS=owner \
-                --env INPUT_EXTRAS_CSS="$component_css" \
-                --env INPUT_CONFIG_DISPLAY=regular \
-                --env INPUT_CONFIG_ANIMATIONS=no \
-                --env INPUT_CONFIG_BASE64=yes \
-                --env INPUT_CONFIG_TWEMOJI=no \
-                --env INPUT_NOTICE_RELEASES=no \
-                --env INPUT_OUTPUT_ACTION=none \
-                --env INPUT_RETRIES=1 \
-                --env INPUT_RETRIES_DELAY=0 \
-                --env INPUT_PLUGINS_ERRORS_FATAL=yes \
-                --env INPUT_VERIFY=yes \
-                "${plugin_args[@]}" \
-                "$METRICS_IMAGE"
-            then
-              render_status=0
-              container_name=""
-              break
-            else
-              render_status=$?
-              echo "::warning::$COMPONENT render attempt ${attempt}/2 failed with status $render_status"
-              cleanup_container
-              container_name=""
-            fi
-
-            if test "$attempt" -lt 2; then
-              sleep 10
-            fi
-          done
-
-          if test "$render_status" -ne 0; then
-            echo "::error::$COMPONENT render failed after 2 bounded attempts"
-            exit "$render_status"
-          fi
-
-      - name: Validate the generated SVG
-        env:
-          FILENAME: ${{ matrix.filename }}
-        run: |
-          set -euo pipefail
-          file="/metrics_renders/$FILENAME"
-          test -f "$file"
-          test "$(find /metrics_renders -maxdepth 1 -type f | wc -l | tr -d ' ')" -eq 1
-          bytes=$(wc -c < "$file" | tr -d ' ')
-          test "$bytes" -ge 1000
-          test "$bytes" -le 2000000
-          head -c 512 "$file" | grep -Eqi '<svg([[:space:]>])'
-          if grep -Eqi '<(script|iframe|object|embed|link|meta)([[:space:]>])|javascript:|[[:space:]]on[a-z]+[[:space:]]*=|@import' "$file"; then
-            echo "Unsafe active content found in generated SVG" >&2
-            exit 1
-          fi
-          if grep -Eqi "(href|xlink:href|src)[[:space:]]*=[[:space:]]*['\"](https?:)?//|url[[:space:]]*\([[:space:]'\"]*(https?:)?//" "$file"; then
-            echo "External resource reference found in generated SVG" >&2
-            exit 1
-          fi
-          case "$FILENAME" in
-            language-stack.svg)
-              ! grep -Eq '>0 Languages<' "$file"
-              grep -q 'class="field language details"' "$file"
-              ;;
-          esac
-
-      - name: Upload the validated component
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+      - name: Check out the profile source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          name: public-profile-metrics-${{ matrix.component }}
-          path: /metrics_renders/${{ matrix.filename }}
-          if-no-files-found: error
-          retention-days: 1
+          persist-credentials: false
 
-  publish:
-    name: Publish validated components
-    needs: render
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    permissions:
-      contents: write
-    steps:
-      - name: Download the validated components
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
-        with:
-          pattern: public-profile-metrics-*
-          path: ${{ runner.temp }}/public-profile-metrics
-          merge-multiple: true
+      - name: Test the renderer
+        run: node --test .github/scripts/render-engineering-signal.test.mjs
 
-      - name: Revalidate and publish only the expected SVGs
+      - name: Render from the explicit repository allowlist
         env:
-          GH_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          directory="$RUNNER_TEMP/public-profile-metrics"
-          expected=(language-stack.svg)
+          output="$RUNNER_TEMP/engineering-signal"
+          node .github/scripts/render-engineering-signal.mjs "$output"
+
+      - name: Validate generated SVGs
+        run: |
+          set -euo pipefail
+          directory="$RUNNER_TEMP/engineering-signal"
+          expected=(
+            engineering-signal-light.svg
+            engineering-signal-dark.svg
+            engineering-signal-mobile-light.svg
+            engineering-signal-mobile-dark.svg
+          )
           test "$(find "$directory" -maxdepth 1 -type f | wc -l | tr -d ' ')" -eq "${#expected[@]}"
 
           for filename in "${expected[@]}"; do
@@ -198,9 +62,20 @@ jobs:
             test -f "$file"
             bytes=$(wc -c < "$file" | tr -d ' ')
             test "$bytes" -ge 1000
-            test "$bytes" -le 2000000
+            test "$bytes" -le 200000
             head -c 512 "$file" | grep -Eqi '<svg([[:space:]>])'
-            if grep -Eqi '<(script|iframe|object|embed|link|meta)([[:space:]>])|javascript:|[[:space:]]on[a-z]+[[:space:]]*=|@import' "$file"; then
+            grep -Fq 'data-component="repository-evidence"' "$file"
+            grep -Fq 'data-schema="1"' "$file"
+            grep -Fq "data-profile=\"$PROFILE_KIND\"" "$file"
+            grep -Fq "data-repositories=\"$EXPECTED_REPOSITORIES\"" "$file"
+
+            layout=desktop
+            if [[ "$filename" == *mobile* ]]; then
+              layout=mobile
+            fi
+            grep -Fq "data-layout=\"$layout\"" "$file"
+
+            if grep -Eqi '<(script|foreignObject|image|iframe|object|embed|link|meta|use)([[:space:]>])|javascript:|[[:space:]]on[a-z]+[[:space:]]*=|@import' "$file"; then
               echo "Unsafe active content found in $filename" >&2
               exit 1
             fi
@@ -208,25 +83,79 @@ jobs:
               echo "External resource reference found in $filename" >&2
               exit 1
             fi
-            case "$filename" in
-              language-stack.svg)
-                ! grep -Eq '>0 Languages<' "$file"
-                grep -q 'class="field language details"' "$file"
-                ;;
-            esac
+          done
+
+      - name: Upload validated evidence panels
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: public-engineering-signal
+          path: ${{ runner.temp }}/engineering-signal/*.svg
+          if-no-files-found: error
+          retention-days: 1
+
+  publish:
+    name: Publish changed evidence panels
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    env:
+      PROFILE_KIND: company
+      EXPECTED_REPOSITORIES: "4"
+    steps:
+      - name: Download validated evidence panels
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: public-engineering-signal
+          path: ${{ runner.temp }}/engineering-signal
+
+      - name: Revalidate and publish only semantic changes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          directory="$RUNNER_TEMP/engineering-signal"
+          expected=(
+            engineering-signal-light.svg
+            engineering-signal-dark.svg
+            engineering-signal-mobile-light.svg
+            engineering-signal-mobile-dark.svg
+          )
+          test "$(find "$directory" -maxdepth 1 -type f | wc -l | tr -d ' ')" -eq "${#expected[@]}"
+
+          for filename in "${expected[@]}"; do
+            file="$directory/$filename"
+            test -f "$file"
+            bytes=$(wc -c < "$file" | tr -d ' ')
+            test "$bytes" -ge 1000
+            test "$bytes" -le 200000
+            head -c 512 "$file" | grep -Eqi '<svg([[:space:]>])'
+            grep -Fq 'data-component="repository-evidence"' "$file"
+            grep -Fq 'data-schema="1"' "$file"
+            grep -Fq "data-profile=\"$PROFILE_KIND\"" "$file"
+            grep -Fq "data-repositories=\"$EXPECTED_REPOSITORIES\"" "$file"
+            if grep -Eqi '<(script|foreignObject|image|iframe|object|embed|link|meta|use)([[:space:]>])|javascript:|[[:space:]]on[a-z]+[[:space:]]*=|@import' "$file"; then
+              echo "Unsafe active content found in $filename" >&2
+              exit 1
+            fi
+            if grep -Eqi "(href|xlink:href|src)[[:space:]]*=[[:space:]]*['\"](https?:)?//|url[[:space:]]*\([[:space:]'\"]*(https?:)?//" "$file"; then
+              echo "External resource reference found in $filename" >&2
+              exit 1
+            fi
           done
 
           if ! gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/metrics-renders" >/dev/null 2>&1; then
-            main_sha=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)
+            default_branch=$(gh api "repos/$GITHUB_REPOSITORY" --jq .default_branch)
+            default_sha=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/$default_branch" --jq .object.sha)
             gh api --method POST "repos/$GITHUB_REPOSITORY/git/refs" \
               -f ref=refs/heads/metrics-renders \
-              -f sha="$main_sha" >/dev/null
+              -f sha="$default_sha" >/dev/null
           fi
 
           for filename in "${expected[@]}"; do
             file="$directory/$filename"
             target="assets/metrics/$filename"
-            component="${filename%.svg}"
             existing_sha=""
             existing_file=$(mktemp)
             if gh api "repos/$GITHUB_REPOSITORY/contents/$target?ref=metrics-renders" \
@@ -242,7 +171,7 @@ jobs:
             args=(
               --method PUT
               "repos/$GITHUB_REPOSITORY/contents/$target"
-              -f "message=chore(metrics): refresh $component"
+              -f "message=chore(metrics): refresh engineering signal"
               -f content="$content"
               -f branch=metrics-renders
             )
