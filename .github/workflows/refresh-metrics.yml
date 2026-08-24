@@ -24,21 +24,15 @@ jobs:
         include:
           - component: language-stack
             filename: language-stack.svg
-          - component: recent-public-activity
-            filename: recent-public-activity.svg
     env:
-      METRICS_IMAGE: ghcr.io/lowlighter/metrics@sha256:257392f90340f916cb8b815026f259399f6b246d3eb7de38b58bfe7a07bd5b65
-      PUBLIC_REPOSITORIES: |-
-        @use.patterns
-        -*/*
-        +edilec/content-identity-auditor
-        +edilec/svg-semantic-layout-auditor
-        +edilec/sitemap-cohort-auditor
-        +edilec/inline-json-for-html
+      METRICS_IMAGE: ghcr.io/lowlighter/metrics@sha256:0a24a23b769873639e7d7d3bebce0aade41ded920f8bfd74650328f4c4967b48
+      SELECTED_REPOSITORIES: >-
+        edilec/content-identity-auditor,
+        edilec/svg-semantic-layout-auditor,
+        edilec/sitemap-cohort-auditor,
+        edilec/inline-json-for-html
       LANGUAGE_CSS: >-
         .items-wrapper>section:first-child{display:none}h3{color:#2f8f6b;font-weight:600;margin-top:4px}svg{color:#57606a}.field.language.details small{color:#57606a}@media(prefers-color-scheme:dark){svg{color:#8c959f}h3{color:#5fb38e}.field.language.details small{color:#8c959f}}
-      ACTIVITY_CSS: >-
-        svg{color:#57606a}h2{color:#2f8f6b;font-weight:600}.activity .issue,.activity .repo{color:#2f8f6b}.activity .details{color:#57606a}@media(prefers-color-scheme:dark){svg{color:#8c959f}h2{color:#5fb38e}.activity .issue,.activity .repo{color:#79c7a3}.activity .details{color:#8c959f}}
     steps:
       - name: Render with an isolated, digest-pinned Metrics container
         env:
@@ -69,20 +63,11 @@ jobs:
                 --env INPUT_PLUGIN_LANGUAGES_THRESHOLD=0.5%
                 --env INPUT_PLUGIN_LANGUAGES_OTHER=yes
                 --env INPUT_PLUGIN_LANGUAGES_DETAILS=percentage
-                --env INPUT_PLUGIN_LANGUAGES_INDEPTH=no
+                --env INPUT_PLUGIN_LANGUAGES_INDEPTH=yes
+                --env INPUT_PLUGIN_LANGUAGES_INDEPTH_CUSTOM="$SELECTED_REPOSITORIES"
+                --env INPUT_PLUGIN_LANGUAGES_ANALYSIS_TIMEOUT=60
+                --env INPUT_PLUGIN_LANGUAGES_ANALYSIS_TIMEOUT_REPOSITORIES=12
                 --env "INPUT_PLUGIN_LANGUAGES_COLORS=JavaScript:2f8f6b, Python:6b7280, TypeScript:5f6f7f"
-              )
-              ;;
-            recent-public-activity)
-              component_css="$ACTIVITY_CSS"
-              plugin_args=(
-                --env INPUT_PLUGIN_ACTIVITY=yes
-                --env INPUT_PLUGIN_ACTIVITY_LIMIT=4
-                --env INPUT_PLUGIN_ACTIVITY_LOAD=300
-                --env INPUT_PLUGIN_ACTIVITY_DAYS=90
-                --env INPUT_PLUGIN_ACTIVITY_VISIBILITY=public
-                --env INPUT_PLUGIN_ACTIVITY_TIMESTAMPS=yes
-                --env INPUT_PLUGIN_ACTIVITY_FILTER=release,pr,review
               )
               ;;
             *)
@@ -115,7 +100,6 @@ jobs:
                 --env INPUT_BASE="" \
                 --env INPUT_REPOSITORIES_FORKS=no \
                 --env INPUT_REPOSITORIES_AFFILIATIONS=owner \
-                --env INPUT_REPOSITORIES_SKIPPED="$PUBLIC_REPOSITORIES" \
                 --env INPUT_EXTRAS_CSS="$component_css" \
                 --env INPUT_CONFIG_DISPLAY=regular \
                 --env INPUT_CONFIG_ANIMATIONS=no \
@@ -175,9 +159,6 @@ jobs:
               ! grep -Eq '>0 Languages<' "$file"
               grep -q 'class="field language details"' "$file"
               ;;
-            recent-public-activity.svg)
-              grep -q 'class="activity"' "$file"
-              ;;
           esac
 
       - name: Upload the validated component
@@ -209,7 +190,7 @@ jobs:
         run: |
           set -euo pipefail
           directory="$RUNNER_TEMP/public-profile-metrics"
-          expected=(language-stack.svg recent-public-activity.svg)
+          expected=(language-stack.svg)
           test "$(find "$directory" -maxdepth 1 -type f | wc -l | tr -d ' ')" -eq "${#expected[@]}"
 
           for filename in "${expected[@]}"; do
@@ -231,9 +212,6 @@ jobs:
               language-stack.svg)
                 ! grep -Eq '>0 Languages<' "$file"
                 grep -q 'class="field language details"' "$file"
-                ;;
-              recent-public-activity.svg)
-                grep -q 'class="activity"' "$file"
                 ;;
             esac
           done

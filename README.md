@@ -1,8 +1,8 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./assets/brand/edilec-mark-on-dark.svg">
-    <source media="(prefers-color-scheme: light)" srcset="./assets/brand/edilec-mark-on-light.svg">
-    <img src="./assets/brand/edilec-mark-on-light.svg" width="72" height="56" alt="Edilec">
+    <source media="(prefers-color-scheme: dark)" srcset="./assets/brand/edilec-systems-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="./assets/brand/edilec-systems-light.svg">
+    <img src="./assets/brand/edilec-systems-light.svg" width="960" alt="Edilec software, AI, identity, data, cloud, and operations systems">
   </picture>
 </p>
 
@@ -60,8 +60,6 @@
 ## Open-source pulse
 
 <img src="https://raw.githubusercontent.com/edilec/edilec/metrics-renders/assets/metrics/language-stack.svg" width="480" alt="Language mix across Edilec's selected maintained public repositories">
-
-<img src="https://raw.githubusercontent.com/edilec/edilec/metrics-renders/assets/metrics/recent-public-activity.svg" width="480" alt="Recent public releases, pull requests, and reviews by Edilec">
 
 ## Product direction
 
