@@ -1,0 +1,161 @@
+name: Refresh public profile metrics
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "41 3 * * 1"
+
+permissions: {}
+
+concurrency:
+  group: public-profile-metrics
+  cancel-in-progress: true
+
+jobs:
+  render:
+    name: Render public language mix
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    env:
+      METRICS_IMAGE: ghcr.io/lowlighter/metrics@sha256:257392f90340f916cb8b815026f259399f6b246d3eb7de38b58bfe7a07bd5b65
+      PUBLIC_REPOSITORIES: |-
+        @use.patterns
+        -*/*
+        +edilec/content-identity-auditor
+        +edilec/sitemap-cohort-auditor
+        +edilec/inline-json-for-html
+        +KRISHNAMMurarka/retry-jitter-lab
+      PROFILE_CSS: >-
+        .items-wrapper>section:first-child{display:none}h3{color:#2f8f6b;font-weight:600;margin-top:4px}svg{color:#57606a}.field.language.details small{color:#57606a}@media(prefers-color-scheme:dark){svg{color:#8c959f}h3{color:#5fb38e}.field.language.details small{color:#8c959f}}
+    steps:
+      - name: Render with an isolated, immutable Metrics container
+        env:
+          METRICS_TOKEN: ${{ github.token }}
+        run: |
+          sudo install -d -m 0777 /metrics_renders
+          docker run --init --rm \
+            --read-only \
+            --cap-drop ALL \
+            --security-opt no-new-privileges \
+            --pids-limit 512 \
+            --memory 2g \
+            --tmpfs /tmp:rw,nosuid,nodev,size=512m \
+            --volume /metrics_renders:/renders \
+            --env INPUT_TOKEN="$METRICS_TOKEN" \
+            --env INPUT_USER="edilec" \
+            --env INPUT_FILENAME="languages.svg" \
+            --env INPUT_BASE="" \
+            --env INPUT_REPOSITORIES_FORKS="no" \
+            --env INPUT_REPOSITORIES_AFFILIATIONS="owner, collaborator" \
+            --env INPUT_REPOSITORIES_SKIPPED="$PUBLIC_REPOSITORIES" \
+            --env INPUT_PLUGIN_LANGUAGES="yes" \
+            --env INPUT_PLUGIN_LANGUAGES_LIMIT="6" \
+            --env INPUT_PLUGIN_LANGUAGES_THRESHOLD="0.5%" \
+            --env INPUT_PLUGIN_LANGUAGES_OTHER="yes" \
+            --env INPUT_PLUGIN_LANGUAGES_DETAILS="percentage" \
+            --env INPUT_PLUGIN_LANGUAGES_INDEPTH="no" \
+            --env INPUT_PLUGIN_LANGUAGES_COLORS="JavaScript:2f8f6b, Python:6b7280, TypeScript:5f6f7f" \
+            --env INPUT_EXTRAS_CSS="$PROFILE_CSS" \
+            --env INPUT_CONFIG_ANIMATIONS="no" \
+            --env INPUT_CONFIG_BASE64="yes" \
+            --env INPUT_CONFIG_TWEMOJI="no" \
+            --env INPUT_NOTICE_RELEASES="no" \
+            --env INPUT_OUTPUT_ACTION="none" \
+            --env INPUT_PLUGINS_ERRORS_FATAL="yes" \
+            --env INPUT_VERIFY="yes" \
+            "$METRICS_IMAGE"
+
+      - name: Validate the generated SVG
+        run: |
+          set -euo pipefail
+          file=/metrics_renders/languages.svg
+          test -f "$file"
+          test "$(find /metrics_renders -type f | wc -l | tr -d ' ')" -eq 1
+          bytes=$(wc -c < "$file" | tr -d ' ')
+          test "$bytes" -ge 1000
+          test "$bytes" -le 2000000
+          head -c 512 "$file" | grep -Eqi '<svg([[:space:]>])'
+          if grep -Eqi '<(script|iframe|object|embed)([[:space:]>])|javascript:|[[:space:]]on(load|error)[[:space:]]*=' "$file"; then
+            echo "Unsafe active content found in generated SVG" >&2
+            exit 1
+          fi
+          if grep -Eqi "<image[^>]+(href|xlink:href)[[:space:]]*=[[:space:]]*['\"]https?://" "$file"; then
+            echo "External image reference found in generated SVG" >&2
+            exit 1
+          fi
+
+      - name: Upload the validated component
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: public-profile-metrics
+          path: /metrics_renders/languages.svg
+          if-no-files-found: error
+          retention-days: 1
+
+  publish:
+    name: Publish validated component
+    needs: render
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - name: Download the validated component
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: public-profile-metrics
+          path: ${{ runner.temp }}/public-profile-metrics
+
+      - name: Revalidate and publish only the SVG
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          file="$RUNNER_TEMP/public-profile-metrics/languages.svg"
+          test -f "$file"
+          test "$(find "$RUNNER_TEMP/public-profile-metrics" -type f | wc -l | tr -d ' ')" -eq 1
+          bytes=$(wc -c < "$file" | tr -d ' ')
+          test "$bytes" -ge 1000
+          test "$bytes" -le 2000000
+          head -c 512 "$file" | grep -Eqi '<svg([[:space:]>])'
+          if grep -Eqi '<(script|iframe|object|embed)([[:space:]>])|javascript:|[[:space:]]on(load|error)[[:space:]]*=' "$file"; then
+            echo "Unsafe active content found in generated SVG" >&2
+            exit 1
+          fi
+          if grep -Eqi "<image[^>]+(href|xlink:href)[[:space:]]*=[[:space:]]*['\"]https?://" "$file"; then
+            echo "External image reference found in generated SVG" >&2
+            exit 1
+          fi
+
+          if ! gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/metrics-renders" >/dev/null 2>&1; then
+            main_sha=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)
+            gh api --method POST "repos/$GITHUB_REPOSITORY/git/refs" \
+              -f ref="refs/heads/metrics-renders" \
+              -f sha="$main_sha" >/dev/null
+          fi
+
+          existing_sha=""
+          existing_file=$(mktemp)
+          if gh api "repos/$GITHUB_REPOSITORY/contents/assets/metrics/languages.svg?ref=metrics-renders" \
+            --jq .content 2>/dev/null | tr -d '\n' | base64 --decode > "$existing_file"; then
+            if cmp -s "$file" "$existing_file"; then
+              echo "Metrics component is already current"
+              exit 0
+            fi
+            existing_sha=$(gh api "repos/$GITHUB_REPOSITORY/contents/assets/metrics/languages.svg?ref=metrics-renders" --jq .sha)
+          fi
+
+          content=$(base64 < "$file" | tr -d '\n')
+          args=(
+            --method PUT
+            "repos/$GITHUB_REPOSITORY/contents/assets/metrics/languages.svg"
+            -f message="chore(metrics): refresh public language mix"
+            -f content="$content"
+            -f branch="metrics-renders"
+          )
+          if test -n "$existing_sha"; then
+            args+=( -f sha="$existing_sha" )
+          fi
+          gh api "${args[@]}" >/dev/null
