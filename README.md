@@ -1,86 +1,85 @@
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./assets/profile/edilec-hero-dark.svg">
-    <img src="./assets/profile/edilec-hero-light.svg" width="100%" alt="Edilec — Software. Systems. Scale. Built to empower. Designed to last.">
-  </picture>
-</p>
+# Edilec
 
-<p align="center">
-  <a href="https://edilec.com/"><strong>Website</strong></a> ·
-  <a href="https://edilec.com/services/">Services</a> ·
-  <a href="https://edilec.com/products/">Products</a> ·
-  <a href="https://edilec.com/blog/">Engineering library</a> ·
-  <a href="https://edilec.com/security/">Security</a> ·
-  <a href="https://edilec.com/contact/">Contact</a>
-</p>
+### Software. Systems. Scale.
 
-Edilec Private Limited builds practical software, AI workflow, cloud, data, identity, security, and product systems. We work from clear ownership and system boundaries toward software that can be tested, operated, and improved.
+**Built to empower. Designed to last.**
 
-## What Edilec builds
+[Website](https://edilec.com/) · [Products](https://edilec.com/products/) · [Engineering library](https://edilec.com/blog/) · [Security](https://edilec.com/security/) · [Contact](https://edilec.com/contact/)
 
-- **Custom software and product engineering** — web applications, platforms, APIs, and internal systems shaped around real operating work.
-- **AI-assisted workflow systems** — automation with explicit inputs, approvals, failure paths, and human accountability.
-- **Cloud and DevOps platforms** — deployment, delivery, observability, and operational controls for maintainable services.
-- **Identity and security systems** — authentication, authorization, auditability, and responsible data boundaries.
-- **Data and reporting infrastructure** — integrations, reporting paths, and decision-ready operational data.
-- **Developer platforms and integrations** — tools and service connections that reduce repeated engineering work.
-
-## Products and current work
-
-### [Uynis](https://edilec.com/products/uynis/) · active development
-
-An Edilec product platform under active development. Public material describes the product direction; its public source is not presented as a production-ready release.
-
-### Edilec Mail · private development
-
-A privately developed mail and customer-communication system. Its source repository and deployment details are not public, and no public-release claim is made here.
+Edilec Private Limited builds practical software, AI workflow, cloud, data,
+identity, security, and product systems. Public repositories are given one
+canonical home, an explicit maturity level, automated checks, and a documented
+security route.
 
 ## Maintained open source
 
+### [SVG Semantic Layout Auditor](https://github.com/edilec/svg-semantic-layout-auditor)
+
+Static accessibility, reference-safety, dimension, and text-layout checks for
+SVG libraries—without rendering, executing content, or fetching a URL.
+
+**Node.js 20+ · v0.1.0 · MIT · release candidate**
+
+[Documentation](https://github.com/edilec/svg-semantic-layout-auditor#readme) · [Rules](https://github.com/edilec/svg-semantic-layout-auditor/blob/main/docs/rules.md) · [Checks](https://github.com/edilec/svg-semantic-layout-auditor/actions) · [Security](https://github.com/edilec/svg-semantic-layout-auditor/security/policy) · [Contribute](https://github.com/edilec/svg-semantic-layout-auditor/blob/main/CONTRIBUTING.md)
+
+### [Content Identity Auditor](https://github.com/edilec/content-identity-auditor)
+
+Audits content-ID collisions, canonical identity, and publication cadence with
+a dependency-free CLI and deterministic JSON reports.
+
+**Node.js 22+ · v0.1.0 · MIT · experimental**
+
+[Documentation](https://github.com/edilec/content-identity-auditor#readme) · [Release](https://github.com/edilec/content-identity-auditor/releases/tag/v0.1.0) · [Checks](https://github.com/edilec/content-identity-auditor/actions) · [Security](https://github.com/edilec/content-identity-auditor/security/policy) · [Contribute](https://github.com/edilec/content-identity-auditor/blob/main/CONTRIBUTING.md)
+
 ### [Sitemap Cohort Auditor](https://github.com/edilec/sitemap-cohort-auditor)
 
-Audit sitemap declarations and compare exact URL cohorts between releases with a dependency-free Node.js CLI. It audits declared sitemap data; it does not crawl listed pages or predict indexing, rankings, or traffic.
+Audits sitemap declarations and compares exact URL cohorts between releases.
+It reports declared sitemap evidence; it does not crawl pages or predict search
+performance.
 
-**v0.2.1** · **Node.js 20+** · **MIT** · CLI
+**Node.js 20+ · v0.2.1 · MIT · maintained**
 
-[Documentation](https://github.com/edilec/sitemap-cohort-auditor#readme) · [Release v0.2.1](https://github.com/edilec/sitemap-cohort-auditor/releases/tag/v0.2.1) · [Automated checks](https://github.com/edilec/sitemap-cohort-auditor/actions) · [Security](https://github.com/edilec/sitemap-cohort-auditor/security/policy) · [Contribute](https://github.com/edilec/sitemap-cohort-auditor/blob/main/CONTRIBUTING.md)
+[Documentation](https://github.com/edilec/sitemap-cohort-auditor#readme) · [Release](https://github.com/edilec/sitemap-cohort-auditor/releases/tag/v0.2.1) · [Checks](https://github.com/edilec/sitemap-cohort-auditor/actions) · [Security](https://github.com/edilec/sitemap-cohort-auditor/security/policy) · [Contribute](https://github.com/edilec/sitemap-cohort-auditor/blob/main/CONTRIBUTING.md)
 
 ### [inline-json-for-html](https://github.com/edilec/inline-json-for-html)
 
-Serialize JSON for the raw text of `<script type="application/json">` elements
-with a small dependency-free utility and TypeScript declarations. It is not for
-executable JavaScript or general HTML sanitization.
+Serializes JSON for the raw text of `<script type="application/json">`
+elements. It is not a general-purpose HTML sanitizer.
 
-**v0.1.1** · **Node.js 22+** · **MIT** · JavaScript library
+**Node.js 22+ · v0.1.1 · MIT · maintained**
 
-[Documentation](https://github.com/edilec/inline-json-for-html#readme) · [Release v0.1.1](https://github.com/edilec/inline-json-for-html/releases/tag/v0.1.1) · [Automated checks](https://github.com/edilec/inline-json-for-html/actions) · [Security](https://github.com/edilec/inline-json-for-html/security/policy) · [Contribute](https://github.com/edilec/inline-json-for-html/blob/main/CONTRIBUTING.md)
+[Documentation](https://github.com/edilec/inline-json-for-html#readme) · [Release](https://github.com/edilec/inline-json-for-html/releases/tag/v0.1.1) · [Checks](https://github.com/edilec/inline-json-for-html/actions) · [Security](https://github.com/edilec/inline-json-for-html/security/policy) · [Contribute](https://github.com/edilec/inline-json-for-html/blob/main/CONTRIBUTING.md)
 
-## How Edilec engineers software
+## Public engineering language mix
 
-- Define ownership, interfaces, and failure boundaries before scaling a system.
-- Treat security and privacy as design inputs, not release-stage additions.
-- Prefer reproducible builds, automated checks, and evidence over unsupported claims.
-- Keep changes reviewable and make operational consequences visible.
-- Design for observability, recovery, and maintainable handover.
-- Record architecture decisions, maturity, limitations, and non-goals explicitly.
-- Use automation to support accountable engineering—not to obscure responsibility.
-- Maintain open-source work with clear scope, support expectations, and disclosure paths.
+<img src="https://raw.githubusercontent.com/edilec/edilec/metrics-renders/assets/metrics/languages.svg" width="480" alt="Language mix across an explicit allowlist of maintained Edilec public repositories">
 
-## Documentation and research
+Generated weekly from an explicit public-repository allowlist with
+[GitHub Metrics](https://github.com/lowlighter/metrics). Forks, private work,
+contribution-calendar activity, and vanity totals are excluded.
 
-- [Engineering library](https://edilec.com/blog/) — practical writing across software, AI, cloud, data, security, and product work.
-- [Products](https://edilec.com/products/) — current Edilec product directions and public product information.
-- [Services](https://edilec.com/services/) — engineering capabilities and engagement areas.
-- [Authors](https://edilec.com/authors/) — the people and teams responsible for Edilec's published work.
+## Engineering standard
 
-## Security and contributing
+- Clear owners, service boundaries, maturity labels, and non-goals.
+- Security and privacy considered before release, with private disclosure paths.
+- Reproducible checks and release evidence before performance or readiness claims.
+- Small, reviewable changes with documented operational consequences.
+- Observability, recovery, and maintainable handover designed into systems.
+- Open-source support expectations and limitations stated explicitly.
 
-For a repository vulnerability, follow that repository's `SECURITY.md` and avoid disclosing unresolved security issues in a public issue. For company or website security concerns, use the [Edilec security page](https://edilec.com/security/) or email [hello@edilec.com](mailto:hello@edilec.com).
+## Products and current work
 
-Contributions should begin with the affected repository's contribution guide and issue tracker. Scope, compatibility, tests, documentation, and security impact should be clear before a change is merged.
+[Uynis](https://edilec.com/products/uynis/) is under active development. Public
+material describes its direction; Edilec does not present its public source as
+a production-ready release.
 
-## Company and maintainers
+## Company and maintainer
 
-**Edilec Private Limited** is led by [Krishnam Murarka](https://github.com/KRISHNAMMurarka), Founder and CEO. Krishnam contributes to and maintains Edilec's public engineering work.
+**Edilec Private Limited** is led by
+[Krishnam Murarka](https://github.com/KRISHNAMMurarka), Founder and CEO. Krishnam
+maintains and contributes to Edilec's public engineering work.
 
-For project planning or commercial enquiries, visit [edilec.com/contact](https://edilec.com/contact/) or email [hello@edilec.com](mailto:hello@edilec.com).
+For a repository vulnerability, follow its `SECURITY.md` instead of opening a
+public issue. For company or website security concerns, use the
+[Edilec security page](https://edilec.com/security/) or email
+[hello@edilec.com](mailto:hello@edilec.com).
