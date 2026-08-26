@@ -84,6 +84,10 @@
 - Reproducible checks and release evidence before readiness or performance claims.
 - Small, reviewable changes with observable operations and recovery guidance.
 
+Account-wide contribution, security, support, and governance defaults live in
+[`edilec/.github`](https://github.com/edilec/.github); project-specific files
+take precedence.
+
 ## Company and maintainer
 
 **Edilec Private Limited** is led by
