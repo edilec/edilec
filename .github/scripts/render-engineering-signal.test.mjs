@@ -54,8 +54,15 @@ test("SVG output is escaped, themed, and semantically marked", () => {
     assert.match(svg, new RegExp(`data-layout="${layout}"`))
     assert.match(svg, /data-signal="engineering"/)
     assert.match(svg, /data-repositories="2"/)
-    assert.match(svg, /data-repository="safe-tool"/)
-    assert.match(svg, /data-release="v1.0.0"/)
+    if (layout === "desktop") {
+      assert.match(svg, /data-repository="safe-tool"/)
+      assert.match(svg, /data-release="v1.0.0"/)
+    }
+    else {
+      assert.match(svg, /viewBox="0 0 390 258"/)
+      assert.match(svg, /1 of 2 released/)
+      assert.doesNotMatch(svg, /data-repository=/)
+    }
     assert.match(svg, /Edilec &amp; Team/)
     assert.doesNotMatch(svg, /<(script|foreignObject|image|iframe|object|embed|link|meta|use)([\s>])|javascript:/i)
     assert.doesNotMatch(svg, /(href|xlink:href|src)\s*=\s*["'](?:https?:)?\/\//i)
