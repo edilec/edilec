@@ -38,8 +38,8 @@
 > ### [Sitemap Cohort Auditor →](https://github.com/edilec/sitemap-cohort-auditor)
 > Exact sitemap declaration and URL-cohort comparison between releases.
 >
-> `Node.js 20+` · `v0.2.1` · `MIT` · `maintained`<br>
-> [Release](https://github.com/edilec/sitemap-cohort-auditor/releases/tag/v0.2.1) · [Security](https://github.com/edilec/sitemap-cohort-auditor/security/policy)
+> `Node.js 20+` · `v0.2.2` · `MIT` · `maintained`<br>
+> [Release](https://github.com/edilec/sitemap-cohort-auditor/releases/tag/v0.2.2) · [Security](https://github.com/edilec/sitemap-cohort-auditor/security/policy)
 
 > ### [inline-json-for-html →](https://github.com/edilec/inline-json-for-html)
 > Narrow JSON serialization for the raw text of HTML script elements; not a general HTML sanitizer.
