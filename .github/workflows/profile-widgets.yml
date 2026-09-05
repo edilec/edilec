@@ -2,11 +2,6 @@ name: Refresh profile widgets
 
 on:
   workflow_dispatch:
-  # TEMPORARY: lets this run before the workflow reaches the
-  # default branch. Removed before merge.
-  push:
-    branches:
-      - readme/profile-refresh
   schedule:
     - cron: "17 4 * * *"
 
