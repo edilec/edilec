@@ -349,7 +349,7 @@ Edilec publishes 204 focused repositories for search, web, accessibility, cloud,
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./assets/profile/contribution-calendar-3d-dark.svg">
-    <img alt="Edilec three-dimensional GitHub contribution calendar for the last year" width="100%" src="./assets/profile/contribution-calendar-3d.svg">
+    <img alt="Edilec open-source contribution activity for the last year" width="100%" src="./assets/profile/contribution-calendar-3d.svg">
   </picture>
 </p>
 
