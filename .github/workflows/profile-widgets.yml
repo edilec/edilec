@@ -1,4 +1,4 @@
-name: Refresh profile widgets
+name: Refresh 3D contribution calendar
 
 on:
   workflow_dispatch:
@@ -8,67 +8,71 @@ on:
 permissions: {}
 
 concurrency:
-  group: profile-widgets
+  group: profile-3d-calendar
   cancel-in-progress: false
 
 jobs:
-  metrics:
-    name: Render metrics panels
+  refresh:
+    name: Generate the profile calendar
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 12
     permissions:
       contents: write
+      pull-requests: write
+    env:
+      PROFILE_LOGIN: edilec
     steps:
-      # The isometric calendar reads the user contribution calendar, which
-      # the repository token can see. The overview and languages panels
-      # need a user scoped PAT: with the repository token they report
-      # "1 Repository" and no languages, so they are deliberately not
-      # rendered here. Add a METRICS_TOKEN secret to enable them.
-      - name: Isometric contribution calendar
-        uses: lowlighter/metrics@65836723097537a54cd8eb90f61839426b4266b6
-        with:
-          token: ${{ secrets.METRICS_TOKEN || github.token }}
-          user: edilec
-          filename: assets/metrics/metrics.isocalendar.svg
-          committer_branch: metrics-renders
-          committer_message: "chore(widgets): refresh isocalendar"
-          config_timezone: Asia/Kolkata
-          base: ""
-          plugin_isocalendar: yes
-          plugin_isocalendar_duration: full-year
-
-
-  snake:
-    name: Render contribution snake
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    permissions:
-      contents: write
-    steps:
-      - name: Check out the render branch
+      - name: Check out the profile source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: metrics-renders
-          path: renders
+          ref: main
+          persist-credentials: true
 
-      - name: Generate the snake
-        uses: Platane/snk@d8f6715049803e982ee5ff501b6b9b7d5deeb09b
-        with:
-          github_user_name: edilec
-          outputs: |
-            renders/assets/snake/github-snake.svg
-            renders/assets/snake/github-snake-dark.svg?palette=github-dark
+      - name: Generate the 3D contribution assets
+        uses: yoshi389111/github-profile-3d-contrib@7d95e7d4cdc028dd1e1cbd957d65f35efb12ae39
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          USERNAME: ${{ env.PROFILE_LOGIN }}
+          MAX_REPOS: 100
 
-      - name: Publish only when the snake changed
-        working-directory: renders
+      - name: Store and validate the profile assets
+        shell: bash
         run: |
           set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/snake
-          if git diff --staged --quiet; then
-            echo "Snake is already current"
-            exit 0
-          fi
-          git commit -m "chore(widgets): refresh contribution snake"
-          git push origin metrics-renders
+          test -s profile-3d-contrib/profile-green.svg
+          test -s profile-3d-contrib/profile-night-green.svg
+          cp profile-3d-contrib/profile-green.svg assets/profile/contribution-calendar-3d.svg
+          cp profile-3d-contrib/profile-night-green.svg assets/profile/contribution-calendar-3d-dark.svg
+          rm -rf profile-3d-contrib
+
+          for filename in contribution-calendar-3d.svg contribution-calendar-3d-dark.svg; do
+            file="assets/profile/$filename"
+            bytes=$(wc -c < "$file" | tr -d ' ')
+            test "$bytes" -ge 500
+            test "$bytes" -le 200000
+            head -c 512 "$file" | grep -Eqi '<svg([[:space:]>])'
+            if grep -Eqi '<(script|foreignObject|image|iframe|object|embed|link|meta|use)([[:space:]>])|javascript:|[[:space:]]on[a-z]+[[:space:]]*=|@import' "$file"; then
+              echo "Unsafe active content found in $filename" >&2
+              exit 1
+            fi
+            if grep -Eqi '(href|xlink:href|src)[[:space:]]*=[[:space:]]*"?[[:space:]]*https?://' "$file"; then
+              echo "External asset reference found in $filename" >&2
+              exit 1
+            fi
+          done
+
+      - name: Open a refresh pull request when the calendar changes
+        uses: peter-evans/create-pull-request@84ae59a2cdc2258d6fa0732dd66352dddae2a412
+        with:
+          token: ${{ github.token }}
+          branch: automation/profile-3d-calendar
+          delete-branch: true
+          commit-message: "chore(profile): refresh 3D contribution calendar"
+          title: "chore(profile): refresh 3D contribution calendar"
+          body: |
+            This automated update refreshes the committed 3D contribution calendar from GitHub account activity.
+
+            The image stays in the profile repository so the README does not depend on a temporary renderer branch.
+          add-paths: |
+            assets/profile/contribution-calendar-3d.svg
+            assets/profile/contribution-calendar-3d-dark.svg

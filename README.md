@@ -1,12 +1,5 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://capsule-render.vercel.app/api?type=waving&color=0:0d1117,40:1f6feb,100:3fb950&height=170&section=header">
-    <img alt="" width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:ffffff,55:e8f1ff,100:c8f7df&height=170&section=header">
-  </picture>
-</p>
-
-<p align="center">
-  <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./assets/brand/edilec-mark-on-dark.svg">
     <img src="./assets/brand/edilec-mark-on-light.svg" width="92" alt="Edilec">
   </picture>
@@ -353,6 +346,13 @@ Edilec publishes 204 focused repositories for search, web, accessibility, cloud,
   </picture>
 </p>
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./assets/profile/contribution-calendar-3d-dark.svg">
+    <img alt="Edilec three-dimensional GitHub contribution calendar for the last year" width="100%" src="./assets/profile/contribution-calendar-3d.svg">
+  </picture>
+</p>
+
 ### How Edilec engineers
 
 - One canonical repository and a named maintainer for each public project.
@@ -374,10 +374,3 @@ For company or website security concerns, use the [Edilec security page](https:/
 or email [hello@edilec.com](mailto:hello@edilec.com).
 
 <p align="center"><b>Built to empower. Designed to last.</b></p>
-
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://capsule-render.vercel.app/api?type=waving&color=0:0d1117,55:1f6feb,100:3fb950&height=110&section=footer">
-    <img alt="" width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:ffffff,55:e8f1ff,100:c8f7df&height=110&section=footer">
-  </picture>
-</p>
