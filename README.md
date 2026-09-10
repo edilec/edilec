@@ -1,5 +1,8 @@
 <p align="center">
-  <img alt="Light Edilec header wave" width="100%" src="./assets/profile/profile-wave-light.svg">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://capsule-render.vercel.app/api?type=waving&color=0:0d1117,40:1f6feb,100:3fb950&height=170&section=header">
+    <img alt="" width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:ffffff,55:e8f1ff,100:c8f7df&height=170&section=header">
+  </picture>
 </p>
 
 <p align="center">
@@ -17,13 +20,13 @@
 </p>
 
 <p align="center">
-  <a href="https://edilec.com/">Website</a> &nbsp;·&nbsp;
-  <a href="https://edilec.com/products/">Products</a> &nbsp;·&nbsp;
-  <a href="https://edilec.com/blog/">Engineering library</a> &nbsp;·&nbsp;
-  <a href="https://edilec.com/security/">Security</a> &nbsp;·&nbsp;
-  <a href="https://www.linkedin.com/company/132503918/">LinkedIn</a> &nbsp;·&nbsp;
-  <a href="https://x.com/edilec_">X</a> &nbsp;·&nbsp;
-  <a href="mailto:hello@edilec.com">Email</a>
+  <a href="https://edilec.com/"><img alt="Website" src="https://img.shields.io/badge/edilec.com-0d1117?style=for-the-badge&logo=googlechrome&logoColor=3fb950"></a>
+  <a href="https://edilec.com/products/"><img alt="Products" src="https://img.shields.io/badge/Products-1f6feb?style=for-the-badge&logo=rocket&logoColor=white"></a>
+  <a href="https://edilec.com/blog/"><img alt="Engineering library" src="https://img.shields.io/badge/Engineering%20library-FF5722?style=for-the-badge&logo=readme&logoColor=white"></a>
+  <a href="https://edilec.com/security/"><img alt="Security" src="https://img.shields.io/badge/Security-8957e5?style=for-the-badge&logo=shieldsdotio&logoColor=white"></a>
+  <a href="https://www.linkedin.com/company/132503918/"><img alt="LinkedIn" src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white"></a>
+  <a href="https://x.com/edilec_"><img alt="X" src="https://img.shields.io/badge/@edilec__-000000?style=for-the-badge&logo=x&logoColor=white"></a>
+  <a href="mailto:hello@edilec.com"><img alt="Email" src="https://img.shields.io/badge/hello@edilec.com-D14836?style=for-the-badge&logo=gmail&logoColor=white"></a>
 </p>
 
 ---
@@ -34,11 +37,29 @@ Custom software and product systems for growing businesses, from architecture th
 happens after launch. The public repositories below are the small, sharp end of that: focused
 tools with tests, tagged releases and explicit non-goals.
 
-<p align="center">Custom software &nbsp;·&nbsp; SaaS &nbsp;·&nbsp; Web and mobile apps &nbsp;·&nbsp; UI and UX &nbsp;·&nbsp; Legacy modernization<br>AI automation &nbsp;·&nbsp; Document AI &nbsp;·&nbsp; Process automation &nbsp;·&nbsp; Cloud and DevOps &nbsp;·&nbsp; Enterprise systems &nbsp;·&nbsp; Data and analytics &nbsp;·&nbsp; Identity and security &nbsp;·&nbsp; Quantum-safe security</p>
+<p align="center">
+  <img alt="Custom software and SaaS" src="https://img.shields.io/badge/Custom%20software%20%C2%B7%20SaaS-1f6feb?style=flat-square">
+  <img alt="Web and mobile apps" src="https://img.shields.io/badge/Web%20%C2%B7%20mobile%20apps-1f6feb?style=flat-square">
+  <img alt="UI and UX" src="https://img.shields.io/badge/UI%20%C2%B7%20UX%20design-1f6feb?style=flat-square">
+  <img alt="Legacy modernization" src="https://img.shields.io/badge/Legacy%20modernization-1f6feb?style=flat-square">
+  <br>
+  <img alt="AI automation and agents" src="https://img.shields.io/badge/AI%20automation%20%C2%B7%20agents-8957e5?style=flat-square">
+  <img alt="Document AI and OCR" src="https://img.shields.io/badge/Document%20AI%20%C2%B7%20OCR-8957e5?style=flat-square">
+  <img alt="Process automation" src="https://img.shields.io/badge/Process%20automation%20%C2%B7%20RPA-8957e5?style=flat-square">
+  <br>
+  <img alt="Cloud and DevOps" src="https://img.shields.io/badge/Cloud%20%C2%B7%20DevOps-238636?style=flat-square">
+  <img alt="Enterprise systems" src="https://img.shields.io/badge/ERP%20%C2%B7%20CRM%20%C2%B7%20HRMS-238636?style=flat-square">
+  <img alt="Data and analytics" src="https://img.shields.io/badge/Data%20%C2%B7%20analytics-238636?style=flat-square">
+  <img alt="Identity and security" src="https://img.shields.io/badge/Identity%20%C2%B7%20security-238636?style=flat-square">
+  <img alt="Quantum safe security" src="https://img.shields.io/badge/Quantum%20safe%20security-238636?style=flat-square">
+</p>
 
 ### Tech stack
 
-<p align="center">TypeScript &nbsp;·&nbsp; JavaScript &nbsp;·&nbsp; Python &nbsp;·&nbsp; React &nbsp;·&nbsp; Node.js &nbsp;·&nbsp; MongoDB &nbsp;·&nbsp; AWS &nbsp;·&nbsp; Azure &nbsp;·&nbsp; Docker &nbsp;·&nbsp; Kubernetes &nbsp;·&nbsp; Git &nbsp;·&nbsp; GitHub Actions</p>
+<p align="center">
+  <img alt="TypeScript, JavaScript, Python, React, Node.js, MongoDB, AWS, Azure, Docker, Kubernetes, Git and GitHub Actions"
+       src="https://skillicons.dev/icons?i=ts,js,python,react,nodejs,mongodb,aws,azure,docker,kubernetes,git,githubactions&perline=12">
+</p>
 
 ### Public repository directory
 
@@ -308,14 +329,29 @@ Edilec publishes 204 focused repositories for search, web, accessibility, cloud,
 ### GitHub
 
 <p align="center">
-  <img alt="Edilec GitHub activity, stored locally in this profile repository" width="100%" src="./assets/profile/github-activity-light.svg">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=edilec&theme=github_dark">
+    <img alt="Edilec profile summary: public repositories, join date and contributions over the last year" width="88%" src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=edilec&theme=github">
+  </picture>
 </p>
 
 <p align="center">
-  <img alt="Edilec contribution calendar for the last year, stored locally in this profile repository" width="100%" src="./assets/profile/contribution-grid-light.svg">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=edilec&theme=github_dark">
+    <img alt="Top languages by repository" width="43%" src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=edilec&theme=github">
+  </picture>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=edilec&theme=github_dark">
+    <img alt="Top languages by commit" width="43%" src="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=edilec&theme=github">
+  </picture>
 </p>
 
-The GitHub panels above are committed locally and generated from account data, so the profile does not depend on third-party statistics, badge, calendar or animation services.
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=edilec&theme=github_dark">
+    <img alt="Edilec GitHub statistics" width="88%" src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=edilec&theme=github">
+  </picture>
+</p>
 
 ### How Edilec engineers
 
@@ -340,5 +376,8 @@ or email [hello@edilec.com](mailto:hello@edilec.com).
 <p align="center"><b>Built to empower. Designed to last.</b></p>
 
 <p align="center">
-  <img alt="Light Edilec footer wave" width="100%" src="./assets/profile/profile-wave-footer-light.svg">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://capsule-render.vercel.app/api?type=waving&color=0:0d1117,55:1f6feb,100:3fb950&height=110&section=footer">
+    <img alt="" width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:ffffff,55:e8f1ff,100:c8f7df&height=110&section=footer">
+  </picture>
 </p>
