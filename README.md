@@ -331,11 +331,11 @@ Edilec publishes 204 focused repositories for search, web, accessibility, cloud,
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=edilec&theme=github_dark">
-    <img alt="Top languages by repository" width="43%" src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=edilec&theme=github">
+    <img alt="Top languages by repository" width="49%" src="https://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=edilec&theme=github">
   </picture>
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=edilec&theme=github_dark">
-    <img alt="Top languages by commit" width="43%" src="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=edilec&theme=github">
+    <img alt="Top languages by commit" width="49%" src="https://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=edilec&theme=github">
   </picture>
 </p>
 
@@ -349,7 +349,7 @@ Edilec publishes 204 focused repositories for search, web, accessibility, cloud,
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./assets/profile/contribution-calendar-3d-dark.svg">
-    <img alt="Edilec open-source contribution activity for the last year" width="100%" src="./assets/profile/contribution-calendar-3d.svg">
+    <img alt="Edilec three-dimensional GitHub contribution calendar for the last year" width="100%" src="./assets/profile/contribution-calendar-3d.svg">
   </picture>
 </p>
 

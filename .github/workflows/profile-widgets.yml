@@ -21,8 +21,6 @@ jobs:
       pull-requests: write
     env:
       PROFILE_LOGIN: edilec
-      PROFILE_LABEL: Edilec
-      ONLY_3D: "1"
     steps:
       - name: Check out the profile source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -30,25 +28,57 @@ jobs:
           ref: main
           persist-credentials: true
 
-      - name: Generate the local contribution assets
+      - name: Configure static calendar variants
         shell: bash
+        run: |
+          cat > profile-3d-settings.json <<'EOF'
+          [
+            {
+              "fileName": "profile-green.svg",
+              "type": "normal",
+              "backgroundColor": "#ffffff",
+              "foregroundColor": "#00000f",
+              "strongColor": "#111133",
+              "weakColor": "gray",
+              "radarColor": "#47a042",
+              "contribColors": ["#efefef", "#d8e887", "#8cc569", "#47a042", "#1d6a23"]
+            },
+            {
+              "fileName": "profile-night-green-static.svg",
+              "type": "normal",
+              "backgroundColor": "#00000f",
+              "foregroundColor": "#eeeeff",
+              "strongColor": "rgb(255,200,55)",
+              "weakColor": "#aaaaaa",
+              "radarColor": "#47a042",
+              "contribColors": ["#444444", "#1B7D28", "#24A736", "#2DD143", "#57DA69"]
+            }
+          ]
+          EOF
+
+      - name: Generate the 3D contribution assets
+        uses: yoshi389111/github-profile-3d-contrib@7d95e7d4cdc028dd1e1cbd957d65f35efb12ae39
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          node .github/scripts/render-profile-assets.mjs assets/profile
+          USERNAME: ${{ env.PROFILE_LOGIN }}
+          MAX_REPOS: 100
+          SETTING_JSON: profile-3d-settings.json
 
-      - name: Validate the profile assets
+      - name: Store and validate the profile assets
         shell: bash
         run: |
           set -euo pipefail
+          test -s profile-3d-contrib/profile-green.svg
+          test -s profile-3d-contrib/profile-night-green-static.svg
+          node .github/scripts/prepare-profile-3d-assets.mjs profile-3d-contrib assets/profile
+          rm -rf profile-3d-contrib profile-3d-settings.json
+
           for filename in contribution-calendar-3d.svg contribution-calendar-3d-dark.svg; do
             file="assets/profile/$filename"
             bytes=$(wc -c < "$file" | tr -d ' ')
             test "$bytes" -ge 500
             test "$bytes" -le 200000
             head -c 512 "$file" | grep -Eqi '<svg([[:space:]>])'
-            grep -Fq 'data-component="contribution-calendar-3d"' "$file"
             grep -Fq 'fill="none" stroke="' "$file"
             if grep -Fq '<rect x="0" y="0" width="1280" height="850"' "$file"; then
               echo "Opaque renderer background found in $filename" >&2
@@ -73,9 +103,9 @@ jobs:
           commit-message: "chore(profile): refresh 3D contribution calendar"
           title: "chore(profile): refresh 3D contribution calendar"
           body: |
-            This automated update refreshes the locally rendered contribution calendar from GitHub account activity.
+            This automated update refreshes the committed 3D contribution calendar from GitHub account activity.
 
-            The image stays in the profile repository so the README does not depend on a temporary renderer or remote image service.
+            The image stays in the profile repository so the README does not depend on a temporary renderer branch.
           add-paths: |
             assets/profile/contribution-calendar-3d.svg
             assets/profile/contribution-calendar-3d-dark.svg
