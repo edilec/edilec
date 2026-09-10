@@ -21,6 +21,8 @@ jobs:
       pull-requests: write
     env:
       PROFILE_LOGIN: edilec
+      PROFILE_LABEL: Edilec
+      ONLY_3D: "1"
     steps:
       - name: Check out the profile source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -28,29 +30,30 @@ jobs:
           ref: main
           persist-credentials: true
 
-      - name: Generate the 3D contribution assets
-        uses: yoshi389111/github-profile-3d-contrib@7d95e7d4cdc028dd1e1cbd957d65f35efb12ae39
+      - name: Generate the local contribution assets
+        shell: bash
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          USERNAME: ${{ env.PROFILE_LOGIN }}
-          MAX_REPOS: 100
+        run: |
+          set -euo pipefail
+          node .github/scripts/render-profile-assets.mjs assets/profile
 
-      - name: Store and validate the profile assets
+      - name: Validate the profile assets
         shell: bash
         run: |
           set -euo pipefail
-          test -s profile-3d-contrib/profile-green.svg
-          test -s profile-3d-contrib/profile-night-green.svg
-          cp profile-3d-contrib/profile-green.svg assets/profile/contribution-calendar-3d.svg
-          cp profile-3d-contrib/profile-night-green.svg assets/profile/contribution-calendar-3d-dark.svg
-          rm -rf profile-3d-contrib
-
           for filename in contribution-calendar-3d.svg contribution-calendar-3d-dark.svg; do
             file="assets/profile/$filename"
             bytes=$(wc -c < "$file" | tr -d ' ')
             test "$bytes" -ge 500
             test "$bytes" -le 200000
             head -c 512 "$file" | grep -Eqi '<svg([[:space:]>])'
+            grep -Fq 'data-component="contribution-calendar-3d"' "$file"
+            grep -Fq 'fill="none" stroke="' "$file"
+            if grep -Fq '<rect x="0" y="0" width="1280" height="850"' "$file"; then
+              echo "Opaque renderer background found in $filename" >&2
+              exit 1
+            fi
             if grep -Eqi '<(script|foreignObject|image|iframe|object|embed|link|meta|use)([[:space:]>])|javascript:|[[:space:]]on[a-z]+[[:space:]]*=|@import' "$file"; then
               echo "Unsafe active content found in $filename" >&2
               exit 1
@@ -70,9 +73,9 @@ jobs:
           commit-message: "chore(profile): refresh 3D contribution calendar"
           title: "chore(profile): refresh 3D contribution calendar"
           body: |
-            This automated update refreshes the committed 3D contribution calendar from GitHub account activity.
+            This automated update refreshes the locally rendered contribution calendar from GitHub account activity.
 
-            The image stays in the profile repository so the README does not depend on a temporary renderer branch.
+            The image stays in the profile repository so the README does not depend on a temporary renderer or remote image service.
           add-paths: |
             assets/profile/contribution-calendar-3d.svg
             assets/profile/contribution-calendar-3d-dark.svg
