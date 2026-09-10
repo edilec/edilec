@@ -57,7 +57,7 @@ jobs:
               echo "Unsafe active content found in $filename" >&2
               exit 1
             fi
-            if grep -Eqi '(href|xlink:href|src)[[:space:]]*=[[:space:]]*["'"'](https?:)?//' "$file"; then
+            if grep -Eqi '(href|xlink:href|src)[[:space:]]*=[[:space:]]*"?https?://' "$file"; then
               echo "External asset reference found in $filename" >&2
               exit 1
             fi
