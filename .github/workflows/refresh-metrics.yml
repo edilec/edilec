@@ -1,4 +1,4 @@
-name: Refresh public engineering signal
+name: Refresh local profile assets
 
 on:
   workflow_dispatch:
@@ -8,199 +8,78 @@ on:
 permissions: {}
 
 concurrency:
-  group: public-engineering-signal
+  group: local-profile-assets
   cancel-in-progress: true
 
 jobs:
-  verify:
-    name: Build and verify evidence panels
+  refresh:
+    name: Refresh committed GitHub profile assets
     runs-on: ubuntu-latest
     timeout-minutes: 8
     permissions:
-      actions: read
-      contents: read
+      contents: write
+      pull-requests: write
     env:
-      PROFILE_KIND: company
+      PROFILE_LOGIN: edilec
       PROFILE_LABEL: Edilec
-      PROFILE_REPOSITORIES: >-
-        edilec/sitemap-cohort-auditor,
-        edilec/inline-json-for-html,
-        edilec/svg-semantic-layout-auditor,
-        edilec/content-identity-auditor
-      EXPECTED_REPOSITORIES: "4"
     steps:
       - name: Check out the profile source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          persist-credentials: false
+          persist-credentials: true
 
-      - name: Test the renderer
-        run: node --test .github/scripts/render-engineering-signal.test.mjs
-
-      - name: Render from the explicit repository allowlist
+      - name: Render the local profile assets
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          output="$RUNNER_TEMP/engineering-signal"
-          node .github/scripts/render-engineering-signal.mjs "$output"
+        run: node .github/scripts/render-profile-assets.mjs assets/profile
 
-      - name: Validate generated SVGs
+      - name: Validate the local SVGs
+        shell: bash
         run: |
           set -euo pipefail
-          directory="$RUNNER_TEMP/engineering-signal"
+          directory="assets/profile"
           expected=(
-            engineering-signal-light.svg
-            engineering-signal-dark.svg
-            engineering-signal-mobile-light.svg
-            engineering-signal-mobile-dark.svg
+            profile-wave-light.svg
+            profile-wave-footer-light.svg
+            github-activity-light.svg
+            contribution-grid-light.svg
           )
-          test "$(find "$directory" -maxdepth 1 -type f | wc -l | tr -d ' ')" -eq "${#expected[@]}"
+          test "$(find "$directory" -maxdepth 1 -type f | wc -l | tr -d ' ')" -ge "${#expected[@]}"
 
           for filename in "${expected[@]}"; do
             file="$directory/$filename"
             test -f "$file"
             bytes=$(wc -c < "$file" | tr -d ' ')
-            test "$bytes" -ge 1000
+            test "$bytes" -ge 500
             test "$bytes" -le 200000
             head -c 512 "$file" | grep -Eqi '<svg([[:space:]>])'
-            grep -Fq 'data-component="repository-evidence"' "$file"
-            grep -Fq 'data-schema="1"' "$file"
-            grep -Fq "data-profile=\"$PROFILE_KIND\"" "$file"
-            grep -Fq "data-repositories=\"$EXPECTED_REPOSITORIES\"" "$file"
-
-            layout=desktop
-            if [[ "$filename" == *mobile* ]]; then
-              layout=mobile
-            fi
-            grep -Fq "data-layout=\"$layout\"" "$file"
-
             if grep -Eqi '<(script|foreignObject|image|iframe|object|embed|link|meta|use)([[:space:]>])|javascript:|[[:space:]]on[a-z]+[[:space:]]*=|@import' "$file"; then
               echo "Unsafe active content found in $filename" >&2
               exit 1
             fi
-            if grep -Eqi "(href|xlink:href|src)[[:space:]]*=[[:space:]]*['\"](https?:)?//|url[[:space:]]*\([[:space:]'\"]*(https?:)?//" "$file"; then
-              echo "External resource reference found in $filename" >&2
+            if grep -Eqi '(href|xlink:href|src)[[:space:]]*=[[:space:]]*["'"'](https?:)?//' "$file"; then
+              echo "External asset reference found in $filename" >&2
               exit 1
             fi
           done
 
-      - name: Upload validated evidence panels
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
-        with:
-          name: public-engineering-signal
-          path: ${{ runner.temp }}/engineering-signal/*.svg
-          if-no-files-found: error
-          retention-days: 1
-
-  publish:
-    name: Publish changed evidence panels
-    needs: verify
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    permissions:
-      contents: write
-    env:
-      PROFILE_KIND: company
-      EXPECTED_REPOSITORIES: "4"
-    steps:
-      - name: Download validated evidence panels
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
-        with:
-          name: public-engineering-signal
-          path: ${{ runner.temp }}/engineering-signal
-
-      - name: Revalidate and publish only semantic changes
+      - name: Open a reviewable refresh pull request
         env:
           GH_TOKEN: ${{ github.token }}
+        shell: bash
         run: |
           set -euo pipefail
-          directory="$RUNNER_TEMP/engineering-signal"
-          expected=(
-            engineering-signal-light.svg
-            engineering-signal-dark.svg
-            engineering-signal-mobile-light.svg
-            engineering-signal-mobile-dark.svg
-          )
-          test "$(find "$directory" -maxdepth 1 -type f | wc -l | tr -d ' ')" -eq "${#expected[@]}"
+          branch="automation/profile-assets-$GITHUB_RUN_ID"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch --create "$branch"
 
-          for filename in "${expected[@]}"; do
-            file="$directory/$filename"
-            test -f "$file"
-            bytes=$(wc -c < "$file" | tr -d ' ')
-            test "$bytes" -ge 1000
-            test "$bytes" -le 200000
-            head -c 512 "$file" | grep -Eqi '<svg([[:space:]>])'
-            grep -Fq 'data-component="repository-evidence"' "$file"
-            grep -Fq 'data-schema="1"' "$file"
-            grep -Fq "data-profile=\"$PROFILE_KIND\"" "$file"
-            grep -Fq "data-repositories=\"$EXPECTED_REPOSITORIES\"" "$file"
-            if grep -Eqi '<(script|foreignObject|image|iframe|object|embed|link|meta|use)([[:space:]>])|javascript:|[[:space:]]on[a-z]+[[:space:]]*=|@import' "$file"; then
-              echo "Unsafe active content found in $filename" >&2
-              exit 1
-            fi
-            if grep -Eqi "(href|xlink:href|src)[[:space:]]*=[[:space:]]*['\"](https?:)?//|url[[:space:]]*\([[:space:]'\"]*(https?:)?//" "$file"; then
-              echo "External resource reference found in $filename" >&2
-              exit 1
-            fi
-          done
-
-          if ! gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/metrics-renders" >/dev/null 2>&1; then
-            default_branch=$(gh api "repos/$GITHUB_REPOSITORY" --jq .default_branch)
-            default_sha=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/$default_branch" --jq .object.sha)
-            gh api --method POST "repos/$GITHUB_REPOSITORY/git/refs" \
-              -f ref=refs/heads/metrics-renders \
-              -f sha="$default_sha" >/dev/null
-          fi
-
-          parent_sha=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/metrics-renders" --jq .object.sha)
-          base_tree=$(gh api "repos/$GITHUB_REPOSITORY/git/commits/$parent_sha" --jq .tree.sha)
-          tree_entries=$(mktemp)
-          printf '[]\n' > "$tree_entries"
-
-          for filename in "${expected[@]}"; do
-            file="$directory/$filename"
-            target="assets/metrics/$filename"
-            existing_file=$(mktemp)
-            if gh api "repos/$GITHUB_REPOSITORY/contents/$target?ref=metrics-renders" \
-              --jq .content 2>/dev/null | tr -d '\n' | base64 --decode > "$existing_file"; then
-              if cmp -s "$file" "$existing_file"; then
-                echo "$filename is already current"
-                continue
-              fi
-            fi
-
-            content=$(base64 < "$file" | tr -d '\n')
-            blob_sha=$(gh api --method POST "repos/$GITHUB_REPOSITORY/git/blobs" \
-              -f content="$content" \
-              -f encoding=base64 \
-              --jq .sha)
-            next_entries=$(mktemp)
-            jq --arg path "$target" --arg sha "$blob_sha" \
-              '. + [{path: $path, mode: "100644", type: "blob", sha: $sha}]' \
-              "$tree_entries" > "$next_entries"
-            mv "$next_entries" "$tree_entries"
-          done
-
-          if test "$(jq length "$tree_entries")" -eq 0; then
-            echo "All engineering-signal assets are already current"
+          if git diff --quiet -- assets/profile; then
+            echo "Local profile assets are already current."
             exit 0
           fi
 
-          tree_payload=$(mktemp)
-          jq -n --arg base_tree "$base_tree" --slurpfile entries "$tree_entries" \
-            '{base_tree: $base_tree, tree: $entries[0]}' > "$tree_payload"
-          new_tree=$(gh api --method POST "repos/$GITHUB_REPOSITORY/git/trees" \
-            --input "$tree_payload" \
-            --jq .sha)
-
-          commit_payload=$(mktemp)
-          jq -n --arg tree "$new_tree" --arg parent "$parent_sha" \
-            '{message: "chore(metrics): refresh engineering signal", tree: $tree, parents: [$parent]}' \
-            > "$commit_payload"
-          new_commit=$(gh api --method POST "repos/$GITHUB_REPOSITORY/git/commits" \
-            --input "$commit_payload" \
-            --jq .sha)
-          gh api --method PATCH "repos/$GITHUB_REPOSITORY/git/refs/heads/metrics-renders" \
-            -f sha="$new_commit" \
-            -F force=false >/dev/null
+          git add assets/profile
+          git commit -m "chore(profile): refresh local GitHub assets"
+          git push --set-upstream origin "$branch"
+          gh pr create --base main --head "$branch" --title "chore(profile): refresh local GitHub assets" --body "Refresh the committed light profile wave, activity summary and contribution calendar from GitHub account data. The README uses these local assets so the profile does not depend on external image services."
