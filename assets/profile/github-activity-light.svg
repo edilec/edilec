@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 250" width="1200" height="250" role="img" aria-labelledby="activity-title activity-desc" data-component="github-activity" data-schema="1" data-profile="edilec" data-as-of="2026-09-10T23:59:59.999Z">
+  <title id="activity-title">Edilec GitHub activity</title>
+  <desc id="activity-desc">A local snapshot of public repositories and GitHub contributions through 10 Sept 2026.</desc>
+  <rect x=".5" y=".5" width="1199" height="249" rx="18" fill="#f6f8fa" stroke="#d0d7de"/>
+  <text x="36" y="37" fill="#116329" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" font-weight="750" letter-spacing="2">GITHUB ACTIVITY</text>
+  <text x="36" y="67" fill="#1f2328" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="24" font-weight="750">Edilec · local profile signal</text>
+  <g>
+    <rect x="36" y="94" width="264" height="94" rx="14" fill="#ffffff" stroke="#d0d7de"/>
+    <text x="54" y="123" fill="#57606a" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" font-weight="700" letter-spacing="1.2">PUBLIC REPOSITORIES</text>
+    <text x="54" y="160" fill="#116329" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="28" font-weight="750">211</text>
+  </g><g>
+    <rect x="318" y="94" width="264" height="94" rx="14" fill="#ffffff" stroke="#d0d7de"/>
+    <text x="336" y="123" fill="#57606a" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" font-weight="700" letter-spacing="1.2">CONTRIBUTIONS</text>
+    <text x="336" y="160" fill="#116329" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="28" font-weight="750">384</text>
+  </g><g>
+    <rect x="600" y="94" width="264" height="94" rx="14" fill="#ffffff" stroke="#d0d7de"/>
+    <text x="618" y="123" fill="#57606a" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" font-weight="700" letter-spacing="1.2">COMMITS</text>
+    <text x="618" y="160" fill="#116329" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="28" font-weight="750">226</text>
+  </g><g>
+    <rect x="882" y="94" width="264" height="94" rx="14" fill="#ffffff" stroke="#d0d7de"/>
+    <text x="900" y="123" fill="#57606a" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" font-weight="700" letter-spacing="1.2">PULL REQUESTS</text>
+    <text x="900" y="160" fill="#116329" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="28" font-weight="750">19</text>
+  </g>
+  <text x="36" y="221" fill="#57606a" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12">Generated from GitHub account data on 10 Sept 2026. The image is stored in this profile repository.</text>
+</svg>
