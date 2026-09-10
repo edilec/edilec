@@ -324,7 +324,7 @@ Edilec publishes 204 focused repositories for search, web, accessibility, cloud,
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=edilec&theme=github_dark">
-    <img alt="Edilec profile summary: public repositories, join date and contributions over the last year" width="88%" src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=edilec&theme=github">
+    <img alt="Edilec profile summary: public repositories, join date and contributions over the last year" width="100%" src="https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=edilec&theme=github">
   </picture>
 </p>
 
@@ -342,7 +342,7 @@ Edilec publishes 204 focused repositories for search, web, accessibility, cloud,
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=edilec&theme=github_dark">
-    <img alt="Edilec GitHub statistics" width="88%" src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=edilec&theme=github">
+    <img alt="Edilec GitHub statistics" width="100%" src="https://github-profile-summary-cards.vercel.app/api/cards/stats?username=edilec&theme=github">
   </picture>
 </p>
 
