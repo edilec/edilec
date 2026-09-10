@@ -18,7 +18,6 @@ jobs:
     timeout-minutes: 8
     permissions:
       contents: write
-      pull-requests: write
     env:
       PROFILE_LOGIN: edilec
       PROFILE_LABEL: Edilec
@@ -39,8 +38,6 @@ jobs:
           set -euo pipefail
           directory="$RUNNER_TEMP/profile-assets"
           expected=(
-            profile-wave-light.svg
-            profile-wave-footer-light.svg
             github-activity-light.svg
             contribution-grid-light.svg
           )
@@ -67,7 +64,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for filename in profile-wave-light.svg profile-wave-footer-light.svg github-activity-light.svg contribution-grid-light.svg; do
+          for filename in github-activity-light.svg contribution-grid-light.svg; do
             file="assets/profile/$filename"
             test -f "$file"
             bytes=$(wc -c < "$file" | tr -d " ")

@@ -110,30 +110,6 @@ function fontFamily() {
   return "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
 }
 
-function renderWave({footer = false} = {}) {
-  const id = footer ? "profile-footer-wave" : "profile-header-wave"
-  const description = footer ? "Light Edilec footer wave" : "Light Edilec header wave"
-  const paths = footer
-    ? `
-  <path d="M0 44C150 20 270 76 430 52C610 24 746 34 890 56C1025 77 1095 58 1200 30V120H0Z" fill="#e8f1ff"/>
-  <path d="M0 68C158 90 290 34 460 58C620 80 775 91 925 63C1055 38 1126 56 1200 78V120H0Z" fill="#e5f7ed"/>
-  <path d="M0 90C160 68 310 103 480 82C664 59 770 105 930 86C1057 71 1125 92 1200 72V120H0Z" fill="#f6f8fa"/>
-  <path d="M0 44C150 20 270 76 430 52C610 24 746 34 890 56C1025 77 1095 58 1200 30" fill="none" stroke="#8ab4f8" stroke-width="2" opacity=".72"/>`
-    : `
-  <path d="M0 28C145 54 285 18 438 42C604 69 744 64 900 38C1045 14 1120 34 1200 20V0H0Z" fill="#e8f1ff"/>
-  <path d="M0 60C145 36 286 76 444 52C604 28 754 24 905 48C1042 70 1120 50 1200 66V0H0Z" fill="#e5f7ed" opacity=".96"/>
-  <path d="M0 88C150 66 296 98 466 74C620 53 774 55 930 80C1050 99 1127 74 1200 84V0H0Z" fill="#f6f8fa" opacity=".95"/>
-  <path d="M0 28C145 54 285 18 438 42C604 69 744 64 900 38C1045 14 1120 34 1200 20" fill="none" stroke="#8ab4f8" stroke-width="2" opacity=".72"/>`
-
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" width="1200" height="120" role="img" aria-labelledby="${id}-title ${id}-desc" data-component="profile-wave" data-theme="light">
-  <title id="${id}-title">${description}</title>
-  <desc id="${id}-desc">A locally stored light blue and green wave used by the profile README.</desc>
-  <rect width="1200" height="120" fill="#ffffff"/>
-  ${paths}
-</svg>
-`
-}
-
 function metricCard(x, label, value) {
   return `<g>
     <rect x="${x}" y="94" width="264" height="94" rx="14" fill="#ffffff" stroke="#d0d7de"/>
@@ -216,8 +192,6 @@ async function main() {
   const {collection, end} = contributions
   await mkdir(OUTPUT_DIRECTORY, {recursive: true})
   const assets = {
-    "profile-wave-light.svg": renderWave(),
-    "profile-wave-footer-light.svg": renderWave({footer: true}),
     "github-activity-light.svg": renderActivity({profile, collection, end}),
     "contribution-grid-light.svg": renderContributionGrid({collection, end}),
   }
