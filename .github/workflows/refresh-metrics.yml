@@ -1,4 +1,4 @@
-name: Refresh local profile assets
+name: Verify local profile assets
 
 on:
   workflow_dispatch:
@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   refresh:
-    name: Refresh committed GitHub profile assets
+    name: Verify committed GitHub profile assets
     runs-on: ubuntu-latest
     timeout-minutes: 8
     permissions:
@@ -31,13 +31,13 @@ jobs:
       - name: Render the local profile assets
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: node .github/scripts/render-profile-assets.mjs assets/profile
+        run: node .github/scripts/render-profile-assets.mjs "$RUNNER_TEMP/profile-assets"
 
       - name: Validate the local SVGs
         shell: bash
         run: |
           set -euo pipefail
-          directory="assets/profile"
+          directory="$RUNNER_TEMP/profile-assets"
           expected=(
             profile-wave-light.svg
             profile-wave-footer-light.svg
@@ -63,23 +63,22 @@ jobs:
             fi
           done
 
-      - name: Open a reviewable refresh pull request
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Verify committed profile assets
         shell: bash
         run: |
           set -euo pipefail
-          branch="automation/profile-assets-$GITHUB_RUN_ID"
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git switch --create "$branch"
-
-          if git diff --quiet -- assets/profile; then
-            echo "Local profile assets are already current."
-            exit 0
-          fi
-
-          git add assets/profile
-          git commit -m "chore(profile): refresh local GitHub assets"
-          git push --set-upstream origin "$branch"
-          gh pr create --base main --head "$branch" --title "chore(profile): refresh local GitHub assets" --body "Refresh the committed light profile wave, activity summary and contribution calendar from GitHub account data. The README uses these local assets so the profile does not depend on external image services."
+          for filename in profile-wave-light.svg profile-wave-footer-light.svg github-activity-light.svg contribution-grid-light.svg; do
+            file="assets/profile/$filename"
+            test -f "$file"
+            bytes=$(wc -c < "$file" | tr -d " ")
+            test "$bytes" -ge 500
+            head -c 512 "$file" | grep -Eqi '<svg([[:space:]>])'
+            if grep -Eqi '<(script|foreignObject|image|iframe|object|embed|link|meta|use)([[:space:]>])|javascript:|[[:space:]]on[a-z]+[[:space:]]*=|@import' "$file"; then
+              echo "Unsafe active content found in $filename" >&2
+              exit 1
+            fi
+            if grep -Eqi '(href|xlink:href|src)[[:space:]]*=[[:space:]]*"?https?://' "$file"; then
+              echo "External asset reference found in $filename" >&2
+              exit 1
+            fi
+          done
