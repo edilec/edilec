@@ -58,6 +58,8 @@ tools with tests, tagged releases and explicit non-goals.
 
 Edilec publishes 204 focused repositories for search, web, accessibility, cloud, automation, developer tooling and related engineering work. Each entry links to its canonical public repository, where the project documentation and release history live.
 
+Explore the [open-source developer tool catalog](https://edilec.com/open-source/) by category, or follow the direct repository links below.
+
 <details>
 <summary><b>SEO &amp; Search</b> &nbsp;·&nbsp; 11 tools</summary>
 
