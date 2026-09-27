@@ -15,6 +15,7 @@
 <p align="center">
   <a href="https://edilec.com/"><img alt="Website" src="https://img.shields.io/badge/edilec.com-0d1117?style=for-the-badge&logo=googlechrome&logoColor=3fb950"></a>
   <a href="https://edilec.com/products/"><img alt="Products" src="https://img.shields.io/badge/Products-1f6feb?style=for-the-badge&logo=rocket&logoColor=white"></a>
+  <a href="https://edilec.com/open-source/"><img alt="Open-source catalog" src="https://img.shields.io/badge/Open%20source-111111?style=for-the-badge&logo=github&logoColor=white"></a>
   <a href="https://edilec.com/blog/"><img alt="Engineering library" src="https://img.shields.io/badge/Engineering%20library-FF5722?style=for-the-badge&logo=readme&logoColor=white"></a>
   <a href="https://edilec.com/security/"><img alt="Security" src="https://img.shields.io/badge/Security-8957e5?style=for-the-badge&logo=shieldsdotio&logoColor=white"></a>
   <a href="https://www.linkedin.com/company/132503918/"><img alt="LinkedIn" src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white"></a>
@@ -56,7 +57,12 @@ tools with tests, tagged releases and explicit non-goals.
 
 ### Public repository directory
 
-Edilec publishes 204 focused repositories for search, web, accessibility, cloud, automation, developer tooling and related engineering work. Each entry links to its canonical public repository, where the project documentation and release history live.
+Edilec publishes the 204 focused repositories below for search, web, accessibility,
+cloud, automation, developer tooling and related engineering work. Each entry links
+to its canonical public repository, where the project documentation and release
+history live. The [open-source catalog](https://edilec.com/open-source/) features
+205 tools in total, including [Retry Jitter Lab](https://github.com/KRISHNAMMurarka/retry-jitter-lab),
+a separately owned public project by Krishnam Murarka.
 
 <details>
 <summary><b>SEO &amp; Search</b> &nbsp;·&nbsp; 11 tools</summary>
