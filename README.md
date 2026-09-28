@@ -30,6 +30,9 @@ Custom software and product systems for growing businesses, from architecture th
 happens after launch. The public repositories below are the small, sharp end of that: focused
 tools with tests, tagged releases and explicit non-goals.
 
+Browse the [Open Source catalog](https://edilec.com/open-source/) to find the tools by category,
+with worked examples and links to their source and releases.
+
 <p align="center">
   <img alt="Custom software and SaaS" src="https://img.shields.io/badge/Custom%20software%20%C2%B7%20SaaS-1f6feb?style=flat-square">
   <img alt="Web and mobile apps" src="https://img.shields.io/badge/Web%20%C2%B7%20mobile%20apps-1f6feb?style=flat-square">
