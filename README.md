@@ -28,7 +28,7 @@
 
 Custom software and product systems for growing businesses, from architecture through to what
 happens after launch. The public repositories below are the small, sharp end of that: focused
-tools with tests, tagged releases and explicit non-goals.
+tools with tests, explicit non-goals and release histories where available.
 
 <p align="center">
   <img alt="Custom software and SaaS" src="https://img.shields.io/badge/Custom%20software%20%C2%B7%20SaaS-1f6feb?style=flat-square">
@@ -56,7 +56,7 @@ tools with tests, tagged releases and explicit non-goals.
 
 ### Public repository directory
 
-Edilec publishes 204 focused repositories for search, web, accessibility, cloud, automation, developer tooling and related engineering work. Each entry links to its canonical public repository, where the project documentation and release history live.
+Edilec publishes 209 focused repositories for search, web, accessibility, cloud, automation, developer tooling and related engineering work. Each entry links to its canonical public repository, where the project documentation and release history live.
 
 <details>
 <summary><b>SEO &amp; Search</b> &nbsp;·&nbsp; 11 tools</summary>
@@ -175,7 +175,7 @@ Edilec publishes 204 focused repositories for search, web, accessibility, cloud,
 </details>
 
 <details>
-<summary><b>Cloud &amp; Platform</b> &nbsp;·&nbsp; 10 tools</summary>
+<summary><b>Cloud &amp; Platform</b> &nbsp;·&nbsp; 11 tools</summary>
 
 - **[Cloud Resource Naming Auditor](https://github.com/edilec/cloud-resource-naming-auditor)** · Check cloud resource names against environment, owner and lifecycle rules. ([releases](https://github.com/edilec/cloud-resource-naming-auditor/releases))
 - **[IAM Least Privilege Diff](https://github.com/edilec/iam-least-privilege-diff)** · Compare identity policies and surface privilege changes in human-readable form. ([releases](https://github.com/edilec/iam-least-privilege-diff/releases))
@@ -187,6 +187,7 @@ Edilec publishes 204 focused repositories for search, web, accessibility, cloud,
 - **[Object Storage Lifecycle Auditor](https://github.com/edilec/object-storage-lifecycle-auditor)** · Check bucket lifecycle rules against retention and deletion requirements. ([releases](https://github.com/edilec/object-storage-lifecycle-auditor/releases))
 - **[Cloud Cost Tag Checker](https://github.com/edilec/cloud-cost-tag-checker)** · Find cloud resources missing cost center, owner or environment tags. ([releases](https://github.com/edilec/cloud-cost-tag-checker/releases))
 - **[Failover Readiness Probe](https://github.com/edilec/failover-readiness-probe)** · Probe recovery dependencies and record whether failover paths are usable. ([releases](https://github.com/edilec/failover-readiness-probe/releases))
+- **[Cloud Exposure Auditor](https://github.com/edilec/cloud-exposure-auditor)** · Audit public storage, administrative ingress, key age, privileged MFA and logging from local cloud exports; no live cloud access.
 
 </details>
 
@@ -207,7 +208,7 @@ Edilec publishes 204 focused repositories for search, web, accessibility, cloud,
 </details>
 
 <details>
-<summary><b>Security &amp; Privacy</b> &nbsp;·&nbsp; 10 tools</summary>
+<summary><b>Security &amp; Privacy</b> &nbsp;·&nbsp; 14 tools</summary>
 
 - **[HTTP Security Header Auditor](https://github.com/edilec/http-security-header-auditor)** · Check security headers against a declared policy and route exceptions. ([releases](https://github.com/edilec/http-security-header-auditor/releases))
 - **[TLS Certificate Inventory](https://github.com/edilec/tls-certificate-inventory)** · Inventory certificate names, expirations, issuers and renewal evidence. ([releases](https://github.com/edilec/tls-certificate-inventory/releases))
@@ -219,6 +220,10 @@ Edilec publishes 204 focused repositories for search, web, accessibility, cloud,
 - **[Threat Model Change Tracker](https://github.com/edilec/threat-model-change-tracker)** · Show how code, configuration and infrastructure changes alter threat assumptions. ([releases](https://github.com/edilec/threat-model-change-tracker/releases))
 - **[Secure File Upload Fixture](https://github.com/edilec/secure-file-upload-fixture)** · Exercise file upload limits, type checks, storage paths and rejection behavior. ([releases](https://github.com/edilec/secure-file-upload-fixture/releases))
 - **[CSRF Fixture Tester](https://github.com/edilec/csrf-fixture-tester)** · Run CSRF fixtures against state-changing routes and token handling. ([releases](https://github.com/edilec/csrf-fixture-tester/releases))
+- **[Scope Guard](https://github.com/edilec/scope-guard)** · Verify a signed testing scope and log offline allow, deny or unknown decisions for proposed destinations; never scans targets.
+- **[Rules of Engagement Builder](https://github.com/edilec/rules-of-engagement-builder)** · Produce unsigned rules-of-engagement and authorization drafts from a local questionnaire.
+- **[Findings Report Builder](https://github.com/edilec/findings-report-builder)** · Build executive and technical reports from local findings, with offline CVSS scoring and shareable redaction.
+- **[ATT&CK Coverage Mapper](https://github.com/edilec/attack-coverage-mapper)** · Map analyst-confirmed activity and detection observations to offline coverage reports and a Navigator layer.
 
 </details>
 
